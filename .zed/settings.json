@@ -1,0 +1,21 @@
+{
+  "lsp": {
+    "eslint": {
+      "settings": {
+        "workingDirectory": {
+          "mode": "detect",
+        },
+      },
+    },
+  },
+  "languages": {
+    "TypeScript": {
+      "language_servers": ["typescript-language-server", "eslint"],
+      "formatter": "language_server",
+    },
+    "TSX": {
+      "language_servers": ["typescript-language-server", "eslint"],
+      "formatter": "language_server",
+    },
+  },
+}

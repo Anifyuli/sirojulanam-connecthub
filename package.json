@@ -1,0 +1,15 @@
+{
+  "name": "sirojulanam-connecthub",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r run dev",
+    "build": "pnpm -r run build",
+    "preview": "pnpm -r run preview",
+    "lint": "pnpm -r run lint",
+    "test": "pnpm -r run test"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
