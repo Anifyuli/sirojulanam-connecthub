@@ -1,0 +1,198 @@
+import { EntityManager } from "@mikro-orm/core";
+import { Events, EventsStatus } from "../entities/Events.ts";
+import { EventTags } from "../entities/EventTags.ts";
+import { EventCategories } from "../entities/EventCategories.ts";
+import { Admins } from "../entities/Admins.ts";
+import { CreateEventDto, UpdateEventDto, EventFilter, EventResponse } from "../types/Event.ts";
+
+export interface EventTagDto {
+  tags: string[];
+}
+
+export class EventService {
+  constructor(private readonly em: EntityManager) { }
+
+  private async mapToResponse(event: Events): Promise<EventResponse> {
+    const tags = await this.getTags(Number(event.id));
+
+    return {
+      id: Number(event.id),
+      categoryId: event.category?.id ? Number(event.category.id) : null,
+      adminId: event.admin.id,
+      title: event.title,
+      slug: event.slug,
+      descriptionMd: event.descriptionMd,
+      tags,
+      locationName: event.locationName ?? undefined,
+      locationDetail: event.locationDetail ?? undefined,
+      startDatetime: event.startDatetime,
+      endDatetime: event.endDatetime,
+      isAllDay: event.isAllDay,
+      status: event.status,
+      coverImageUrl: event.coverImageUrl ?? undefined,
+      isFree: event.isFree,
+      createdAt: event.createdAt!,
+      updatedAt: event.updatedAt!,
+    };
+  }
+
+  async find(filter: EventFilter = {}): Promise<EventResponse[]> {
+    const where: any = {};
+
+    if (filter.title) {
+      where.title = { $contains: filter.title };
+    }
+    if (filter.categoryId) {
+      where.category = { id: filter.categoryId };
+    }
+    if (filter.adminId) {
+      where.admin = { id: filter.adminId };
+    }
+    if (filter.slug) {
+      where.slug = filter.slug;
+    }
+
+    const events = await this.em.find(Events, where, {
+      orderBy: { createdAt: 'DESC' }
+    });
+
+    return Promise.all(events.map((event) => this.mapToResponse(event)));
+  }
+
+  async findAll(): Promise<EventResponse[]> {
+    return this.find();
+  }
+
+  async findByTitle(title: string): Promise<EventResponse | null> {
+    const event = await this.em.findOne(Events, { title });
+
+    if (!event) {
+      return null;
+    }
+
+    return this.mapToResponse(event);
+  }
+
+  async findById(id: number): Promise<EventResponse | null> {
+    const event = await this.em.findOne(Events, { id });
+
+    if (!event) {
+      return null;
+    }
+
+    return this.mapToResponse(event);
+  }
+
+  async findByCategory(categoryId: number): Promise<EventResponse[]> {
+    return this.find({ categoryId });
+  }
+
+  async create(data: CreateEventDto): Promise<EventResponse> {
+    const event = new Events();
+    event.admin = this.em.getReference(Admins, data.adminId);
+    event.category = data.eventId ? this.em.getReference(EventCategories, data.eventId) : undefined;
+    event.title = data.title;
+    event.slug = data.slug;
+    event.descriptionMd = data.descriptionMd;
+    event.locationName = data.locationName;
+    event.locationDetail = data.locationDetail;
+    event.startDatetime = data.startDatetime;
+    event.endDatetime = data.endDatetime;
+    event.isAllDay = data.isAllDay ?? false;
+    event.status = data.status as EventsStatus;
+    event.coverImageUrl = data.coverImageUrl;
+    event.isFree = data.isFree;
+
+    this.em.persist(event);
+    await this.em.flush();
+
+    return this.mapToResponse(event);
+  }
+
+  async update(id: number, data: UpdateEventDto): Promise<EventResponse> {
+    const event = await this.em.findOneOrFail(Events, { id });
+
+    event.title = data.title;
+    event.slug = data.slug;
+    event.descriptionMd = data.descriptionMd;
+    event.locationName = data.locationName;
+    event.locationDetail = data.locationDetail;
+    event.startDatetime = data.startDatetime;
+    event.endDatetime = data.endDatetime;
+    event.isAllDay = data.isAllDay ?? event.isAllDay;
+    event.status = data.status as EventsStatus;
+    event.coverImageUrl = data.coverImageUrl;
+    event.isFree = data.isFree;
+
+    if (data.eventId !== undefined) {
+      event.category = data.eventId ? this.em.getReference(EventCategories, data.eventId) : undefined;
+    }
+
+    event.updatedAt = new Date();
+
+    await this.em.flush();
+
+    return this.mapToResponse(event);
+  }
+
+  async delete(id: number): Promise<boolean> {
+    const event = await this.em.findOne(Events, { id });
+
+    if (!event) {
+      return false;
+    }
+
+    this.em.remove(event);
+    await this.em.flush();
+    return true;
+  }
+
+  async getTags(eventId: number): Promise<string[]> {
+    const eventTags = await this.em.find(EventTags, { event: { id: eventId } });
+    return eventTags.map((et) => et.tag);
+  }
+
+  async addTags(eventId: number, tags: string[]): Promise<void> {
+    const event = await this.em.findOneOrFail(Events, { id: eventId });
+
+    for (const tag of tags) {
+      const existingTag = await this.em.findOne(EventTags, { event, tag });
+      if (!existingTag) {
+        const eventTag = new EventTags();
+        eventTag.event = event;
+        eventTag.tag = tag.trim();
+        this.em.persist(eventTag);
+      }
+    }
+
+    await this.em.flush();
+  }
+
+  async removeTags(eventId: number, tags: string[]): Promise<void> {
+    const eventTags = await this.em.find(EventTags, {
+      event: { id: eventId },
+      tag: { $in: tags },
+    });
+
+    for (const eventTag of eventTags) {
+      this.em.remove(eventTag);
+    }
+
+    await this.em.flush();
+  }
+
+  async clearTags(eventId: number): Promise<void> {
+    const eventTags = await this.em.find(EventTags, { event: { id: eventId } });
+
+    for (const eventTag of eventTags) {
+      this.em.remove(eventTag);
+    }
+
+    await this.em.flush();
+  }
+
+  async setTags(eventId: number, tags: string[]): Promise<void> {
+    await this.clearTags(eventId);
+    await this.addTags(eventId, tags);
+  }
+}
