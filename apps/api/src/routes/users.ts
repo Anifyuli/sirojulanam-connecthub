@@ -1,10 +1,9 @@
-import express from "express";
+import { createRouter } from "../utils/createRouter.ts";
 
-const router = express.Router();
+const userRouter = createRouter();
 
-/* GET users listing. */
-router.get("/", function(req, res) {
-  res.json({ users: [] });
-});
+userRouter.post("/login", (req, res) => {
 
-export default router;
+})
+
+export default userRouter;
