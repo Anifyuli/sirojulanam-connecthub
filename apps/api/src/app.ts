@@ -3,7 +3,7 @@ import path from "node:path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 
-import indexRouter from "./routes/index";
+import indexRouter from "./routes/index.ts";
 
 const app = express();
 
