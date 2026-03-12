@@ -54,19 +54,26 @@ CREATE TABLE prayer_times (
 );
 
 -- ============================================================
+--  JADWAL IMAM SHOLAT 5 WAKTU
+--     Siklus berdasarkan waktu sholat 5 waktu (fajr, dhuhr, asr, maghrib, isha)
+-- ============================================================
+
+CREATE TABLE daily_prayer_schedules (
+  pray_time  ENUM('fajr','dhuhr','asr','maghrib','isha') NOT NULL PRIMARY KEY,
+  imam       VARCHAR(150) NOT NULL
+);
+
+-- ============================================================
 --  JADWAL SHOLAT JUM'AT
 --     Pasaran Jawa: siklus 5 hari (pon → wage → kliwon → legi → pahing)
 --     Setiap baris = satu Jum'at, lengkap dengan petugas
 -- ============================================================
 
 CREATE TABLE jumat_schedules (
-  id       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  pasaran  ENUM('pon','wage','kliwon','legi','pahing') NOT NULL,
+  pasaran  ENUM('pon','wage','kliwon','legi','pahing') NOT NULL PRIMARY KEY,
   imam     VARCHAR(150) NOT NULL,
   khotib   VARCHAR(150) NOT NULL,
   bilal    VARCHAR(150) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -254,9 +261,17 @@ INSERT INTO video_categories (name, slug) VALUES
   ('Shorts / Clip',   'shorts-clip');
 
 -- Contoh jadwal Jum'at (sesuaikan tanggal & petugas aktual)
-INSERT INTO jumat_schedules (date, pasaran, time, imam, khotib, bilal, topic) VALUES
-  ('2025-03-07', 'pon',    '11:30:00', 'Ust. Ahmad',  'Ust. Budi',   'Pak Cahyo',  'Keutamaan Sholat Berjamaah'),
-  ('2025-03-14', 'wage',   '11:30:00', 'Ust. Budi',   'Ust. Dani',   'Pak Eko',    'Menjaga Lisan'),
-  ('2025-03-21', 'kliwon', '11:30:00', 'Ust. Dani',   'Ust. Ahmad',  'Pak Fajar',  'Birrul Walidain'),
-  ('2025-03-28', 'legi',   '11:30:00', 'Ust. Fajar',  'Ust. Cahyo',  'Pak Ahmad',  'Tanda-tanda Kiamat'),
-  ('2025-04-04', 'pahing', '11:30:00', 'Ust. Cahyo',  'Ust. Fajar',  'Pak Budi',   'Keutamaan Bulan Ramadan');
+INSERT INTO jumat_schedules (date, pasaran, time, imam, khotib, bilal) VALUES
+  ('2025-03-07', 'pon',    '11:30:00', 'Ust. Ahmad',  'Ust. Budi',   'Pak Cahyo'),
+  ('2025-03-14', 'wage',   '11:30:00', 'Ust. Budi',   'Ust. Dani',   'Pak Eko'),
+  ('2025-03-21', 'kliwon', '11:30:00', 'Ust. Dani',   'Ust. Ahmad',  'Pak Fajar'),
+  ('2025-03-28', 'legi',   '11:30:00', 'Ust. Fajar',  'Ust. Cahyo',  'Pak Ahmad'),
+  ('2025-04-04', 'pahing', '11:30:00', 'Ust. Cahyo',  'Ust. Fajar',  'Pak Budi');
+
+-- Contoh jadwal sholat 5 waktu
+INSERT INTO daily_prayer_schedules (pray_time, imam) VALUES
+  ('fajr',    'Ust. Ahmad'),
+  ('dhuhr',   'Ust. Budi'),
+  ('asr',     'Ust. Budi'),
+  ('maghrib', 'Ust. Dani'),
+  ('isha',    'Ust. Dani');
