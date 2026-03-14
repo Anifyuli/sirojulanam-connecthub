@@ -40,16 +40,19 @@ CREATE TABLE admins (
 -- ============================================================
 
 CREATE TABLE prayer_times (
-  id       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  date     DATE NOT NULL,
-  imsak    TIME NOT NULL,
-  fajr     TIME NOT NULL,   -- Subuh
-  sunrise  TIME NOT NULL,   -- Terbit
-  dhuhr    TIME NOT NULL,   -- Dzuhur
-  asr      TIME NOT NULL,   -- Ashar
-  maghrib  TIME NOT NULL,   -- Maghrib
-  isha     TIME NOT NULL,   -- Isya
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  short_date    INT DEFAULT NULL,
+  long_date     DATE NOT NULL,
+  day           VARCHAR(255),
+  imsak         TIME NOT NULL,
+  fajr          TIME NOT NULL,   -- Subuh
+  sunrise       TIME NOT NULL,   -- Terbit
+  dhuha         TIME NOT NULL,   -- Dhuha
+  dhuhr         TIME NOT NULL,   -- Dzuhur
+  asr           TIME NOT NULL,   -- Ashar
+  maghrib       TIME NOT NULL,   -- Maghrib
+  isha          TIME NOT NULL,   -- Isya
+  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_prayer_date (date)
 );
 
