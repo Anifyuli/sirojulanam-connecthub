@@ -6,8 +6,14 @@ export class PrayerTimes {
   @PrimaryKey()
   id!: number;
 
+  @Property({ type: 'int' })
+  shortDate!: number
+
   @Property({ type: 'date', unique: 'uq_prayer_date' })
-  date!: string;
+  longDate!: string;
+
+  @Property({ type: 'string' })
+  day!: string;
 
   @Property({ type: 'time' })
   imsak!: string;
@@ -17,6 +23,9 @@ export class PrayerTimes {
 
   @Property({ type: 'time' })
   sunrise!: string;
+
+  @Property({ type: 'time' })
+  dhuha!: string;
 
   @Property({ type: 'time' })
   dhuhr!: string;
