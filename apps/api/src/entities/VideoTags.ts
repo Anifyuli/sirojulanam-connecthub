@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, PrimaryKey, PrimaryKeyProp, type Rel } from '@mikro-orm/core';
-import { Videos } from './Videos.js';
+import { Videos } from './Videos.ts';
 
 @Entity()
 export class VideoTags {

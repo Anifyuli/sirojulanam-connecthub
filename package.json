@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm -r run dev",
+    "dev": "pnpm -r --filter=!api run dev",
+    "dev:all": "pnpm run dev & pnpm --filter api run dev",
+    "dev:api": "pnpm --filter api run dev",
     "build": "pnpm -r run build",
     "preview": "pnpm -r run preview",
     "lint": "pnpm -r run lint",
@@ -11,5 +13,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.26.0"
   }
 }

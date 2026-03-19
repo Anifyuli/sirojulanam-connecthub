@@ -11,6 +11,7 @@ export default defineConfig({
   password: process.env.DB_PASS as string,
   port: Number(process.env.DB_PORT) || 3306,
   metadataProvider: TsMorphMetadataProvider,
+  allowGlobalContext: true,
   migrations: {
     path: 'src/migrations',
   },

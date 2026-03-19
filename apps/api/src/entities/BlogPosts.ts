@@ -1,6 +1,7 @@
-import { Entity, Index, ManyToOne, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
+import { Entity, Index, ManyToOne, OneToMany, Collection, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
 import { Admins } from './Admins.ts';
 import { BlogCategories } from './BlogCategories.ts';
+import { BlogTags } from './BlogTags.ts';
 
 @Entity()
 @Index({ name: 'idx_post_title', properties: ['title'] })
@@ -15,6 +16,9 @@ export class BlogPosts {
 
   @ManyToOne({ entity: () => Admins, index: 'fk_post_admin' })
   admin!: Rel<Admins>;
+
+  @OneToMany({ entity: () => BlogTags, mappedBy: 'post' })
+  tags = new Collection<BlogTags>(this);
 
   @Property({ length: 300 })
   title!: string;
@@ -38,7 +42,7 @@ export class BlogPosts {
   isFeatured: boolean & Opt = false;
 
   @Property({ columnType: 'timestamp', nullable: true })
-  publishedAt?: Date;
+  publishedAt?: Date | null;
 
   @Property({ type: 'integer', unsigned: true })
   viewCount: number & Opt = 0;

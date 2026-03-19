@@ -1,6 +1,6 @@
 import { useState } from "react";
 import NavbarLogo from "@sirojulanam-connecthub/shared/assets/images/navbar-logo.png";
-import { Home, Menu, Xmark } from "iconoir-react";
+import { Home, Menu, Xmark, Play } from "iconoir-react";
 import { Calendar, Journal } from "iconoir-react/regular";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./button/Button";
@@ -14,6 +14,7 @@ export function Navbar() {
     { path: "/", label: "Beranda", icon: <Home /> },
     { path: "/news", label: "Berita", icon: <Journal /> },
     { path: "/agenda", label: "Agenda", icon: <Calendar /> },
+    { path: "/video", label: "Video", icon: <Play /> },
   ];
 
   return (

@@ -1,7 +1,53 @@
+import { useState, useEffect } from "react";
 import { PrayerCardGroup } from "./PrayerCardGroup";
 import { FridayPrayerCard } from "./FridayPrayerCard";
+import { jumatSchedulesService, type JumatSchedule } from "../lib/api";
+
+function formatDate(date: Date): string {
+  const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const months = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+  
+  const dayName = days[date.getDay()];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  
+  return `${dayName}, ${day} ${month} ${year}M`;
+}
 
 export function PraySchedule() {
+  const [jumatSchedule, setJumatSchedule] = useState<JumatSchedule | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchJumatSchedule() {
+      try {
+        const data = await jumatSchedulesService.getAll();
+        if (data.data.length > 0) {
+          const today = new Date();
+          const upcoming = data.data.find(s => new Date(s.date) >= today);
+          if (upcoming) {
+            setJumatSchedule(upcoming);
+          } else {
+            setJumatSchedule(data.data[0]);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch jumat schedule:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchJumatSchedule();
+  }, []);
+
+  const today = new Date();
+  const dateString = formatDate(today);
+
   return (
     <section className="w-full bg-white px-4 py-12 md:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8">
@@ -15,7 +61,7 @@ export function PraySchedule() {
             </div>
             <div>
               <p className="text-base text-gray-600 md:text-lg">
-                Ahad, 1 Maret 2026M (10 Ramadhan 1447H)
+                {dateString}
               </p>
             </div>
             <PrayerCardGroup />
@@ -31,7 +77,10 @@ export function PraySchedule() {
                 — An-Nisa (4: 103)
               </cite>
             </div>
-            <FridayPrayerCard />
+            <FridayPrayerCard 
+              loading={loading} 
+              schedule={jumatSchedule} 
+            />
           </div>
         </div>
       </div>

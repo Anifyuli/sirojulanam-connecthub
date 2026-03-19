@@ -1,6 +1,7 @@
-import { Entity, Enum, ManyToOne, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
+import { Entity, Enum, ManyToOne, OneToMany, Collection, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
 import { Admins } from './Admins.ts';
 import { EventCategories } from './EventCategories.ts'
+import { EventTags } from './EventTags.ts';
 
 @Entity()
 export class Events {
@@ -13,6 +14,9 @@ export class Events {
 
   @ManyToOne({ entity: () => Admins, index: 'fk_event_admin' })
   admin!: Rel<Admins>;
+
+  @OneToMany({ entity: () => EventTags, mappedBy: 'event' })
+  tags = new Collection<EventTags>(this);
 
   @Property({ length: 300 })
   title!: string;

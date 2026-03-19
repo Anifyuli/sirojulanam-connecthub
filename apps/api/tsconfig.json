@@ -3,17 +3,17 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
     "allowImportingTsExtensions": true,
-    "types": ["node"],
+    "noEmit": true,
+    "types": ["node", "jest"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "isolatedModules": true
   },
-  "include": ["**/*", "src/**/*"],
-  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "temp"]
 }

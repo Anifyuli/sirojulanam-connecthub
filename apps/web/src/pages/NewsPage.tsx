@@ -1,100 +1,36 @@
-import { useState, useEffect } from "react";
-import { NewsList, type NewsItem } from "../components/NewsList";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pagination, type PaginationData } from "../components/Pagination";
+import { blogsService, type BlogPost } from "../lib/api";
+import { Search } from "iconoir-react";
 
-const DUMMY_NEWS: NewsItem[] = [
-  {
-    id: 1,
-    title: "Peringatan Nuzulul Qur'an di Masjid Sirojul Anam",
-    excerpt: "Masjid Sirojul Anam menggelar peringatan Nuzulul Qur'an dengan tausiyah dari Ustadz Abdul Somad. Acara dihadiri oleh ratusan jama'ah...",
-    thumbnail: "https://placehold.co/300x200/0eb5f1/ffffff?text=Nuzulul+Quran",
-    slug: "peringatan-nuzulul-quran-2026",
-  },
-  {
-    id: 2,
-    title: "Kegiatan Buka Puasa Bersama Anak Yatim",
-    excerpt: "Dalam rangka menyemarakkan Ramadhan, pengurus masjid mengadakan buka puasa bersama untuk 100 anak yatim dari sekitar masjid...",
-    thumbnail: "https://placehold.co/300x200/87cb34/ffffff?text=Buka+Puasa",
-    slug: "buka-puasa-anak-yatim-2026",
-  },
-  {
-    id: 3,
-    title: "Jadwal Shalat Idul Fitri 1447 H",
-    excerpt: "Pengurus Masjid Sirojul Anam mengumumkan jadwal pelaksanaan salat Idul Fitri 1 Syawal 1447 H yang akan dilaksanakan pada...",
-    thumbnail: "https://placehold.co/300x200/ffd63f/1a1a2e?text=Idul+Fitri",
-    slug: "jadwal-idul-fitri-1447h",
-  },
-  {
-    id: 4,
-    title: "Kajian Rutin Setiap Malam Jumat",
-    excerpt: "Mulai bulan Ramadhan ini, Masjid Sirojul Anam mengadakan kajian rutin setiap malam Jumat ba'da Isya dengan materi Fiqih Puasa...",
-    thumbnail: "https://placehold.co/300x200/4895f6/ffffff?text=Kajian+Rutin",
-    slug: "kajian-rutin-malam-jumat",
-  },
-  {
-    id: 5,
-    title: "Penyaluran Zakat Fitrah Mulai 25 Ramadhan",
-    excerpt: "Panitia Zakat Masjid Sirojul Anam akan mulai menyalurkan zakat fitrah kepada mustahik sejak tanggal 25 Ramadhan. Total ada 500 paket...",
-    thumbnail: "https://placehold.co/300x200/48d4f6/ffffff?text=Zakat+Fitrah",
-    slug: "penyaluran-zakat-fitrah-2026",
-  },
-  {
-    id: 6,
-    title: "Lomba Tausiyah Ramadhan untuk Remaja",
-    excerpt: "Remaja Masjid Sirojul Anam mengadakan lomba tausiyah untuk memeriahkan Ramadhan. Pendaftaran terbuka hingga 20 Ramadhan...",
-    thumbnail: "https://placehold.co/300x200/ff5f3f/ffffff?text=Lomba+Tausiyah",
-    slug: "lomba-tausiyah-ramadhan-2026",
-  },
-  {
-    id: 7,
-    title: "Tadarus Akbar Malam 27 Ramadhan",
-    excerpt: "Masjid Sirojul Anam gelar tadarus akbar pada malam 27 Ramadhan untuk mencari Lailatul Qadar. Kegiatan dimulai ba'da Maghrib...",
-    thumbnail: "https://placehold.co/300x200/0eb5f1/ffffff?text=Tadarus+Akbar",
-    slug: "tadarus-akbar-malam-27",
-  },
-  {
-    id: 8,
-    title: "Santunan Yatim Piatu Bulan Ramadhan",
-    excerpt: "Pengurus masjid menyalurkan santunan untuk 150 anak yatim piatu. Setiap anak menerima paket sembako dan uang tunai...",
-    thumbnail: "https://placehold.co/300x200/87cb34/ffffff?text=Santunan+Yatim",
-    slug: "santunan-yatim-piatu-2026",
-  },
-  {
-    id: 9,
-    title: "Khataman Al-Qur'an Jilid 5",
-    excerpt: "TPA Masjid Sirojul Anam mengadakan khataman Al-Qur'an untuk 50 santi. Acara dihadiri oleh orang tua dan pengurus masjid...",
-    thumbnail: "https://placehold.co/300x200/ffd63f/1a1a2e?text=Khataman+Quran",
-    slug: "khataman-quran-jilid-5",
-  },
-  {
-    id: 10,
-    title: "Persiapan Shalat Tarawih Akhir Ramadhan",
-    excerpt: "Panitia Ramadhan mempersiapkan pelaksanaan salat tarawih untuk malam-malam terakhir Ramadhan dengan peningkatan keamanan...",
-    thumbnail: "https://placehold.co/300x200/4895f6/ffffff?text=Tarawih+Akhir",
-    slug: "persiapan-tarawih-akhir-ramadhan",
-  },
-  {
-    id: 11,
-    title: "Pengumuman Hari Raya Idul Fitri 1447 H",
-    excerpt: "Pemerintah melalui Kemenag mengumumkan 1 Syawal 1447 H jatuh pada hari Senin. Masjid Sirojul Anam siap melaksanakan salat Ied...",
-    thumbnail: "https://placehold.co/300x200/48d4f6/ffffff?text=Pengumuman+Idul+Fitri",
-    slug: "pengumuman-idul-fitri-1447h",
-  },
-  {
-    id: 12,
-    title: "Bakti Sosial Bersih-Bersih Masjid",
-    excerpt: "Remaja masjid mengadakan bakti sosial bersih-bersih area Masjid menjelang hari raya. Kegiatan diikuti oleh 30 remaja...",
-    thumbnail: "https://placehold.co/300x200/ff5f3f/ffffff?text=Bakti+Sosial",
-    slug: "bakti-sosial-bersih-masjid",
-  },
-];
+export interface NewsItem {
+  id: number;
+  title: string;
+  excerpt: string;
+  thumbnail: string;
+  slug: string;
+  publishedAt?: string;
+  tags?: string[];
+}
 
 const ITEMS_PER_PAGE = 5;
 
+function mapBlogToNewsItem(blog: BlogPost): NewsItem {
+  return {
+    id: blog.id,
+    title: blog.title,
+    excerpt: blog.excerpt || (blog.contentMd ? blog.contentMd.replace(/[#*_~`]/g, '').substring(0, 150) + "..." : ""),
+    thumbnail: blog.coverImageUrl || "https://placehold.co/300x200/0eb5f1/ffffff?text=Berita",
+    slug: blog.slug,
+    publishedAt: blog.publishedAt,
+    tags: blog.tags,
+  };
+}
+
 export function NewsPage() {
   const navigate = useNavigate();
-  const [newsList, setNewsList] = useState<NewsItem[]>([]);
+  const [allNews, setAllNews] = useState<NewsItem[]>([]);
   const [pagination, setPagination] = useState<PaginationData>({
     currentPage: 1,
     totalPages: 0,
@@ -102,41 +38,84 @@ export function NewsPage() {
     itemsPerPage: ITEMS_PER_PAGE,
   });
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function fetchNews(page: number) {
       setLoading(true);
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        const startIndex = (page - 1) * ITEMS_PER_PAGE;
-        const endIndex = startIndex + ITEMS_PER_PAGE;
-        const paginatedNews = DUMMY_NEWS.slice(startIndex, endIndex);
 
-        setNewsList(paginatedNews);
+      try {
+        const response = await blogsService.getAll({
+          page,
+          limit: ITEMS_PER_PAGE,
+        });
+
+        const mappedNews = response.data.map(mapBlogToNewsItem);
+        setAllNews(mappedNews);
         setPagination({
           currentPage: page,
-          totalPages: Math.ceil(DUMMY_NEWS.length / ITEMS_PER_PAGE),
-          totalItems: DUMMY_NEWS.length,
+          totalPages: response.pagination.totalPages,
+          totalItems: response.pagination.total,
           itemsPerPage: ITEMS_PER_PAGE,
         });
-      } catch (error) {
-        console.error("Failed to fetch news:", error);
+      } catch (err) {
+        console.error("Failed to fetch blogs:", err);
+        setAllNews([]);
+        setPagination({
+          currentPage: 1,
+          totalPages: 0,
+          totalItems: 0,
+          itemsPerPage: ITEMS_PER_PAGE,
+        });
       } finally {
         setLoading(false);
       }
     }
 
-    fetchNews(pagination.currentPage);
-  }, [pagination.currentPage]);
+    fetchNews(1);
+  }, []);
+
+  const filteredNews = useMemo(() => {
+    if (!searchQuery.trim()) return allNews;
+    const query = searchQuery.toLowerCase();
+    return allNews.filter(
+      (news) =>
+        news.title.toLowerCase().includes(query) ||
+        news.excerpt.toLowerCase().includes(query)
+    );
+  }, [allNews, searchQuery]);
+
+  const paginatedNews = useMemo(() => {
+    const startIndex = (pagination.currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredNews.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredNews, pagination.currentPage]);
 
   const handleNewsClick = (news: NewsItem) => {
-    navigate(`/news/${news.slug || news.id}`);
+    navigate(`/news/${news.slug}`);
   };
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = async (page: number) => {
     if (page >= 1 && page <= pagination.totalPages) {
-      setPagination((prev) => ({ ...prev, currentPage: page }));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      setLoading(true);
+      try {
+        const response = await blogsService.getAll({
+          page,
+          limit: ITEMS_PER_PAGE,
+        });
+        const mappedNews = response.data.map(mapBlogToNewsItem);
+        setAllNews(mappedNews);
+        setPagination({
+          currentPage: page,
+          totalPages: response.pagination.totalPages,
+          totalItems: response.pagination.total,
+          itemsPerPage: ITEMS_PER_PAGE,
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        console.error("Failed to fetch blogs:", err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -157,13 +136,94 @@ export function NewsPage() {
         Sirojul Anam Terkini
       </h1>
 
-      <NewsList items={newsList} onNewsClick={handleNewsClick} />
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Cari berita..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full rounded-lg border border-gray-200 py-3 pl-10 pr-4 text-gray-900 placeholder-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-200"
+        />
+      </div>
 
-      <Pagination
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        showingLabel={`Menampilkan ${newsList.length} dari ${pagination.totalItems} berita`}
-      />
+      {searchQuery && (
+        <p className="mb-4 text-sm text-gray-600">
+          Menampilkan {paginatedNews.length} dari {filteredNews.length} hasil untuk "{searchQuery}"
+        </p>
+      )}
+
+      {paginatedNews.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500">Belum ada berita</p>
+        </div>
+      ) : (
+        <>
+          <NewsList items={paginatedNews} onNewsClick={handleNewsClick} />
+          <Pagination
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            showingLabel={`Menampilkan ${paginatedNews.length} dari ${pagination.totalItems} berita`}
+          />
+        </>
+      )}
+    </div>
+  );
+}
+
+interface NewsListProps {
+  items: NewsItem[];
+  onNewsClick: (news: NewsItem) => void;
+}
+
+function NewsList({ items, onNewsClick }: NewsListProps) {
+  return (
+    <div className="flex flex-col gap-4">
+      {items.map((news) => (
+        <article
+          key={news.id}
+          className="flex cursor-pointer gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
+          onClick={() => onNewsClick(news)}
+        >
+          <img
+            src={news.thumbnail}
+            alt={news.title}
+            className="h-24 w-32 flex-shrink-0 rounded object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "https://placehold.co/300x200/0eb5f1/ffffff?text=Berita";
+            }}
+          />
+          <div className="flex flex-1 flex-col justify-between">
+            <div>
+              <h3 className="line-clamp-2 text-lg font-semibold text-gray-900">
+                {news.title}
+              </h3>
+              <p className="mt-1 line-clamp-2 text-sm text-gray-600">
+                {news.excerpt}
+              </p>
+            </div>
+            <div className="mt-2 flex items-center gap-2">
+              {news.tags && news.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {news.tags.slice(0, 3).map((tag, i) => (
+                    <span
+                      key={i}
+                      className="rounded-full bg-cyan-100 px-2 py-0.5 text-xs text-cyan-700"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {news.tags.length > 3 && (
+                    <span className="text-xs text-gray-500">
+                      +{news.tags.length - 3}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </article>
+      ))}
     </div>
   );
 }

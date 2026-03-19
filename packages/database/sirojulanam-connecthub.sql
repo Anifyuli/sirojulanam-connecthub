@@ -240,41 +240,19 @@ CREATE TABLE video_tags (
   CONSTRAINT fk_vtag_video FOREIGN KEY (video_id) REFERENCES videos(id) ON DELETE CASCADE
 );
 
+
 -- ============================================================
---  SEED DATA AWAL
+--  JWT refresh token
 -- ============================================================
-
-INSERT INTO roles (name) VALUES ('admin'), ('editor');
-
-INSERT INTO blog_categories (name, slug, color_hex) VALUES
-  ('Artikel Islam', 'artikel-islam', '#10B981'),
-  ('Kegiatan',      'kegiatan',      '#3B82F6'),
-  ('Pengumuman',    'pengumuman',    '#F59E0B');
-
-INSERT INTO event_categories (name, slug, color_hex) VALUES
-  ('Kajian',          'kajian',          '#8B5CF6'),
-  ('Taklim',          'taklim',          '#06B6D4'),
-  ('Sosial',          'sosial',          '#EF4444'),
-  ('Peringatan Hari', 'peringatan-hari', '#F97316');
-
-INSERT INTO video_categories (name, slug) VALUES
-  ('Kajian Rutin',    'kajian-rutin'),
-  ('Khutbah Jum\'at', 'khutbah-jumat'),
-  ('Ceramah Umum',    'ceramah-umum'),
-  ('Shorts / Clip',   'shorts-clip');
-
--- Contoh jadwal Jum'at (sesuaikan tanggal & petugas aktual)
-INSERT INTO jumat_schedules (date, pasaran, time, imam, khotib, bilal) VALUES
-  ('2025-03-07', 'pon',    '11:30:00', 'Ust. Ahmad',  'Ust. Budi',   'Pak Cahyo'),
-  ('2025-03-14', 'wage',   '11:30:00', 'Ust. Budi',   'Ust. Dani',   'Pak Eko'),
-  ('2025-03-21', 'kliwon', '11:30:00', 'Ust. Dani',   'Ust. Ahmad',  'Pak Fajar'),
-  ('2025-03-28', 'legi',   '11:30:00', 'Ust. Fajar',  'Ust. Cahyo',  'Pak Ahmad'),
-  ('2025-04-04', 'pahing', '11:30:00', 'Ust. Cahyo',  'Ust. Fajar',  'Pak Budi');
-
--- Contoh jadwal sholat 5 waktu
-INSERT INTO daily_prayer_schedules (pray_time, imam) VALUES
-  ('fajr',    'Ust. Ahmad'),
-  ('dhuhr',   'Ust. Budi'),
-  ('asr',     'Ust. Budi'),
-  ('maghrib', 'Ust. Dani'),
-  ('isha',    'Ust. Dani');
+CREATE TABLE `refresh_tokens` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `admin_id` int(10) unsigned NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expires_at` timestamp NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `is_revoked` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `token` (`token`),
+  KEY `refresh_tokens_admin_id_index` (`admin_id`),
+  CONSTRAINT `refresh_tokens_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON UPDATE CASCADE
+);

@@ -1,4 +1,4 @@
-import { Entity, Enum, type Opt, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, type Opt, PrimaryKey, Property } from '@mikro-orm/core';
 
 export enum JumatSchedulesPasaran {
   PON = 'pon',

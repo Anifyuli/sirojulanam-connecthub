@@ -1,5 +1,5 @@
-import { Entity, ManyToOne, PrimaryKey, PrimaryKeyProp, type Rel } from '@mikro-orm/core';
-import { BlogPosts } from './BlogPosts.js';
+import { Entity, ManyToOne, PrimaryKey, PrimaryKeyProp, Property, type Rel } from '@mikro-orm/core';
+import { BlogPosts } from './BlogPosts.ts';
 
 @Entity()
 export class BlogTags {
@@ -9,7 +9,7 @@ export class BlogTags {
   @ManyToOne({ entity: () => BlogPosts, deleteRule: 'cascade', primary: true })
   post!: Rel<BlogPosts>;
 
-  @PrimaryKey({ length: 80 })
+  @Property({ length: 80, primary: true })
   tag!: string;
 
 }

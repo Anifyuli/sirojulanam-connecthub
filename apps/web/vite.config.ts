@@ -11,4 +11,13 @@ export default defineConfig({
       "@sirojulanam-connecthub/shared": path.resolve(__dirname, "../../packages/shared"),
     },
   },
+  server: {
+    port: 5174,
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
+  },
 });

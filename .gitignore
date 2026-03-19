@@ -1,31 +1,55 @@
 # Dependencies
 node_modules/
+.pnpm-store/
 
 # Build outputs
 dist/
 build/
 .next/
 out/
+coverage/
 
 # Logs
 *.log
 pnpm-debug.log
+npm-debug.log
+yarn-debug.log
+yarn-error.log
 
 # Environment files
 .env
 .env.local
 .env.*.local
+.env.*.env
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+*.sublime-workspace
+*.sublime-project
+.zed/
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Cache
 .cache/
 .turbo/
+.fleet/
+.parcel-cache/
+
+# TypeScript
+*.tsbuildinfo
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+drizzle/
+
+# Testing
+.junit.xml/

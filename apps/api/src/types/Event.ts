@@ -13,6 +13,7 @@ export interface CreateEventDto {
   status: string;
   coverImageUrl?: string;
   isFree: boolean;
+  tags?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,6 +33,7 @@ export interface UpdateEventDto {
   status: string;
   coverImageUrl?: string;
   isFree: boolean;
+  tags?: string[];
   updatedAt: Date;
 }
 

@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Roles } from './Roles.js';
+import { Roles } from './Roles.ts';
 
 @Entity()
 export class Admins {
@@ -12,6 +12,9 @@ export class Admins {
 
   @Property({ length: 100 })
   name!: string;
+
+  @Property({ length: 50, unique: 'username' })
+  username!: string;
 
   @Property({ length: 150, unique: 'email' })
   email!: string;

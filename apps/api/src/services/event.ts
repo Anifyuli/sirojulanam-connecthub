@@ -4,6 +4,7 @@ import { EventTags } from "../entities/EventTags.ts";
 import { EventCategories } from "../entities/EventCategories.ts";
 import { Admins } from "../entities/Admins.ts";
 import { CreateEventDto, UpdateEventDto, EventFilter, EventResponse } from "../types/Event.ts";
+import { PaginationParams, PaginatedResponse } from "../types/pagination.ts";
 
 export interface EventTagDto {
   tags: string[];
@@ -36,7 +37,11 @@ export class EventService {
     };
   }
 
-  async find(filter: EventFilter = {}): Promise<EventResponse[]> {
+  async find(filter: EventFilter = {}, pagination: PaginationParams = {}): Promise<PaginatedResponse<EventResponse>> {
+    const page = pagination.page || 1;
+    const limit = pagination.limit || 10;
+    const offset = (page - 1) * limit;
+
     const where: any = {};
 
     if (filter.title) {
@@ -52,15 +57,32 @@ export class EventService {
       where.slug = filter.slug;
     }
 
-    const events = await this.em.find(Events, where, {
-      orderBy: { createdAt: 'DESC' }
-    });
+    const [events, total] = await Promise.all([
+      this.em.find(Events, where, {
+        orderBy: { createdAt: 'DESC' },
+        limit,
+        offset,
+      }),
+      this.em.count(Events, where),
+    ]);
 
-    return Promise.all(events.map((event) => this.mapToResponse(event)));
+    const data = await Promise.all(events.map((event) => this.mapToResponse(event)));
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1,
+      },
+    };
   }
 
   async findAll(): Promise<EventResponse[]> {
-    return this.find();
+    return (await this.find({}, { page: 1, limit: 100 })).data;
   }
 
   async findByTitle(title: string): Promise<EventResponse | null> {
@@ -84,7 +106,7 @@ export class EventService {
   }
 
   async findByCategory(categoryId: number): Promise<EventResponse[]> {
-    return this.find({ categoryId });
+    return (await this.find({ categoryId }, { page: 1, limit: 100 })).data;
   }
 
   async create(data: CreateEventDto): Promise<EventResponse> {
@@ -106,6 +128,16 @@ export class EventService {
     this.em.persist(event);
     await this.em.flush();
 
+    if (data.tags && data.tags.length > 0) {
+      for (const tag of data.tags) {
+        const eventTag = new EventTags();
+        eventTag.event = event;
+        eventTag.tag = tag.trim();
+        event.tags.add(eventTag);
+      }
+      await this.em.flush();
+    }
+
     return this.mapToResponse(event);
   }
 
@@ -126,6 +158,18 @@ export class EventService {
 
     if (data.eventId !== undefined) {
       event.category = data.eventId ? this.em.getReference(EventCategories, data.eventId) : undefined;
+    }
+
+    if (data.tags !== undefined) {
+      const existingTags = await this.em.find(EventTags, { event });
+      this.em.remove(existingTags);
+
+      for (const tag of data.tags) {
+        const eventTag = new EventTags();
+        eventTag.event = event;
+        eventTag.tag = tag.trim();
+        this.em.persist(eventTag);
+      }
     }
 
     event.updatedAt = new Date();

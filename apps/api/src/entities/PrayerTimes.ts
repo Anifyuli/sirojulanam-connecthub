@@ -1,19 +1,29 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core';
 
 @Entity()
+@Unique({ properties: ['date', 'city'] })
 export class PrayerTimes {
 
   @PrimaryKey()
   id!: number;
 
-  @Property({ type: 'int' })
-  shortDate!: number
+  @Property({ type: 'string' })
+  date!: string;
 
-  @Property({ type: 'date', unique: 'uq_prayer_date' })
-  longDate!: string;
+  @Property({ type: 'string' })
+  shortDate!: string;
+
+  @Property({ type: 'date' })
+  longDate!: Date;
 
   @Property({ type: 'string' })
   day!: string;
+
+  @Property({ type: 'string' })
+  city!: string;
+
+  @Property({ type: 'string' })
+  province!: string;
 
   @Property({ type: 'time' })
   imsak!: string;
@@ -41,5 +51,8 @@ export class PrayerTimes {
 
   @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
   createdAt?: Date;
+
+  @Property({ columnType: 'timestamp', nullable: true })
+  updatedAt?: Date;
 
 }

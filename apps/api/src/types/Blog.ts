@@ -8,9 +8,10 @@ export interface CreateBlogPostDto {
   coverImageUrl?: string;
   isPublished?: boolean;
   isFeatured?: boolean;
-  publishedAt?: Date;
+  publishedAt?: Date | string | null;
   metaTitle?: string;
   metaDescription?: string;
+  tags?: string[];
 }
 
 export interface UpdateBlogPostDto {
@@ -22,9 +23,10 @@ export interface UpdateBlogPostDto {
   coverImageUrl?: string;
   isPublished?: boolean;
   isFeatured?: boolean;
-  publishedAt?: Date;
+  publishedAt?: Date | string | null;
   metaTitle?: string;
   metaDescription?: string;
+  tags?: string[];
 }
 
 export interface BlogTagDto {

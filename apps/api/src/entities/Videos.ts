@@ -1,6 +1,7 @@
-import { Entity, Enum, ManyToOne, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Admins } from './Admins.js';
-import { VideoCategories } from './VideoCategories.js';
+import { Entity, Enum, ManyToOne, OneToMany, Collection, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
+import { Admins } from './Admins.ts';
+import { VideoCategories } from './VideoCategories.ts';
+import { VideoTags } from './VideoTags.ts';
 
 @Entity()
 export class Videos {
@@ -13,6 +14,9 @@ export class Videos {
 
   @ManyToOne({ entity: () => Admins, index: 'fk_video_admin' })
   admin!: Rel<Admins>;
+
+  @OneToMany({ entity: () => VideoTags, mappedBy: 'video' })
+  tags = new Collection<VideoTags>(this);
 
   @Property({ length: 300 })
   title!: string;
