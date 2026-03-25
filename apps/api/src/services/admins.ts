@@ -10,7 +10,7 @@ import { PaginationParams, PaginatedResponse } from '../types/pagination.ts';
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
-  admin: Omit<AdminResponse, 'roleId'> & { role: string } & { username: string };
+  admin: Omit<AdminResponse, 'roleId' | 'roleName'> & { role: string } & { username: string };
 }
 
 export class AdminService {
@@ -23,6 +23,7 @@ export class AdminService {
       name: admin.name,
       email: admin.email,
       roleId: admin.role.id,
+      roleName: admin.role.name,
       isActive: admin.isActive,
       createdAt: admin.createdAt!,
       updatedAt: admin.updatedAt!,

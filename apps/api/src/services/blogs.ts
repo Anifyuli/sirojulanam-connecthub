@@ -13,10 +13,20 @@ export class BlogService {
     await blog.tags.init();
     const tags = blog.tags.getItems().map((bt) => bt.tag);
 
-    return {
+    const response: BlogPostResponse = {
       id: Number(blog.id),
       categoryId: blog.category?.id ? Number(blog.category.id) : null,
+      category: blog.category ? {
+        id: Number(blog.category.id),
+        name: blog.category.name,
+        slug: blog.category.slug,
+      } : undefined,
       adminId: blog.admin.id,
+      admin: blog.admin ? {
+        id: blog.admin.id,
+        name: blog.admin.name,
+        username: blog.admin.username,
+      } : undefined,
       title: blog.title,
       slug: blog.slug,
       excerpt: blog.excerpt ?? "",
@@ -32,6 +42,8 @@ export class BlogService {
       createdAt: blog.createdAt!,
       updatedAt: blog.updatedAt!,
     };
+
+    return response;
   }
 
   async find(filter: BlogPostFilter = {}, pagination: PaginationParams = {}): Promise<PaginatedResponse<BlogPostResponse>> {
@@ -65,7 +77,7 @@ export class BlogService {
         orderBy: { createdAt: 'DESC' },
         limit,
         offset,
-        populate: ['tags'],
+        populate: ['tags', 'category', 'admin'],
       }),
       this.em.count(BlogPosts, where),
     ]);
@@ -90,7 +102,7 @@ export class BlogService {
   }
 
   async findByTitle(title: string): Promise<BlogPostResponse | null> {
-    const blog = await this.em.findOne(BlogPosts, { title });
+    const blog = await this.em.findOne(BlogPosts, { title }, { populate: ['admin', 'category'] });
 
     if (!blog) {
       return null;
@@ -100,7 +112,7 @@ export class BlogService {
   }
 
   async findBySlug(slug: string): Promise<BlogPostResponse | null> {
-    const blog = await this.em.findOne(BlogPosts, { slug });
+    const blog = await this.em.findOne(BlogPosts, { slug }, { populate: ['admin', 'category'] });
 
     if (!blog) {
       return null;
@@ -110,7 +122,7 @@ export class BlogService {
   }
 
   async findById(id: number): Promise<BlogPostResponse | null> {
-    const blog = await this.em.findOne(BlogPosts, { id });
+    const blog = await this.em.findOne(BlogPosts, { id }, { populate: ['admin', 'category'] });
 
     if (!blog) {
       return null;
@@ -124,8 +136,10 @@ export class BlogService {
   }
 
   async create(data: CreateBlogPostDto): Promise<BlogPostResponse> {
+    const admin = await this.em.findOneOrFail(Admins, { id: data.adminId }, { populate: ['role'] });
+    
     const blog = new BlogPosts();
-    blog.admin = this.em.getReference(Admins, data.adminId);
+    blog.admin = admin;
     blog.category = data.categoryId ? this.em.getReference(BlogCategories, data.categoryId) : undefined;
     blog.title = data.title;
     blog.slug = data.slug;
@@ -273,5 +287,13 @@ export class BlogService {
   async setTags(postId: number, tags: string[]): Promise<void> {
     await this.clearTags(postId);
     await this.addTags(postId, tags);
+  }
+
+  async incrementViewCount(id: number): Promise<void> {
+    const blog = await this.em.findOne(BlogPosts, { id });
+    if (blog) {
+      blog.viewCount = (blog.viewCount || 0) + 1;
+      await this.em.flush();
+    }
   }
 }

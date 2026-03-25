@@ -17,11 +17,11 @@ export class JumatScheduleController {
 
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Note: This service doesn't have a find method, returning all would need implementation
+      const schedules = await this.service.findAll();
+
       res.json({
         success: true,
-        data: [],
-        message: "Use GET /:pasaran to get specific schedule",
+        data: schedules,
       });
     } catch (error) {
       next(error);
@@ -30,7 +30,7 @@ export class JumatScheduleController {
 
   getByPasaran = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pasaran } = req.params;
+      const { pasaran: _pasaran } = req.params;
 
       // Note: This service doesn't have a findById method, would need implementation
       res.status(501).json({

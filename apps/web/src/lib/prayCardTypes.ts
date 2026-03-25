@@ -2,6 +2,7 @@ export interface PrayCardProps {
   name?: string;
   startOn?: string;
   iqamah?: string;
+  imam?: string;
   active?: boolean;
   activeColor?: string;
 }

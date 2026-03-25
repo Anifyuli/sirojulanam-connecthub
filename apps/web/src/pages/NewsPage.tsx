@@ -20,7 +20,7 @@ function mapBlogToNewsItem(blog: BlogPost): NewsItem {
   return {
     id: blog.id,
     title: blog.title,
-    excerpt: blog.excerpt || (blog.contentMd ? blog.contentMd.replace(/[#*_~`]/g, '').substring(0, 150) + "..." : ""),
+    excerpt: blog.excerpt || (blog.contentMd ? blog.contentMd.replace(/<[^>]*>/g, '').substring(0, 150) + "..." : ""),
     thumbnail: blog.coverImageUrl || "https://placehold.co/300x200/0eb5f1/ffffff?text=Berita",
     slug: blog.slug,
     publishedAt: blog.publishedAt,
@@ -40,38 +40,31 @@ export function NewsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    async function fetchNews(page: number) {
-      setLoading(true);
+  const fetchNews = async (page: number) => {
+    setLoading(true);
+    try {
+      const response = await blogsService.getAll({
+        page,
+        limit: ITEMS_PER_PAGE,
+      });
 
-      try {
-        const response = await blogsService.getAll({
-          page,
-          limit: ITEMS_PER_PAGE,
-        });
-
-        const mappedNews = response.data.map(mapBlogToNewsItem);
-        setAllNews(mappedNews);
-        setPagination({
-          currentPage: page,
-          totalPages: response.pagination.totalPages,
-          totalItems: response.pagination.total,
-          itemsPerPage: ITEMS_PER_PAGE,
-        });
-      } catch (err) {
-        console.error("Failed to fetch blogs:", err);
-        setAllNews([]);
-        setPagination({
-          currentPage: 1,
-          totalPages: 0,
-          totalItems: 0,
-          itemsPerPage: ITEMS_PER_PAGE,
-        });
-      } finally {
-        setLoading(false);
-      }
+      const mappedNews = response.data.map(mapBlogToNewsItem);
+      setAllNews(mappedNews);
+      setPagination({
+        currentPage: page,
+        totalPages: response.pagination.totalPages,
+        totalItems: response.pagination.total,
+        itemsPerPage: ITEMS_PER_PAGE,
+      });
+    } catch (err) {
+      console.error("Failed to fetch blogs:", err);
+      setAllNews([]);
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     fetchNews(1);
   }, []);
 
@@ -85,37 +78,15 @@ export function NewsPage() {
     );
   }, [allNews, searchQuery]);
 
-  const paginatedNews = useMemo(() => {
-    const startIndex = (pagination.currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredNews.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredNews, pagination.currentPage]);
-
   const handleNewsClick = (news: NewsItem) => {
     navigate(`/news/${news.slug}`);
   };
 
-  const handlePageChange = async (page: number) => {
+  const handlePageChange = (page: number) => {
     if (page >= 1 && page <= pagination.totalPages) {
-      setLoading(true);
-      try {
-        const response = await blogsService.getAll({
-          page,
-          limit: ITEMS_PER_PAGE,
-        });
-        const mappedNews = response.data.map(mapBlogToNewsItem);
-        setAllNews(mappedNews);
-        setPagination({
-          currentPage: page,
-          totalPages: response.pagination.totalPages,
-          totalItems: response.pagination.total,
-          itemsPerPage: ITEMS_PER_PAGE,
-        });
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } catch (err) {
-        console.error("Failed to fetch blogs:", err);
-      } finally {
-        setLoading(false);
-      }
+      setSearchQuery("");
+      fetchNews(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -132,9 +103,13 @@ export function NewsPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-3 py-8 md:px-6">
-      <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">
-        Sirojul Anam Terkini
-      </h1>
+
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold text-gray-900">Sirojul Anam Terkini</h1>
+        <p className="mt-1.5 text-gray-500">
+          Ikuti perkembangan dan warta seputar Islam dan Masjid Sirojul Anam
+        </p>
+      </div>
 
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
@@ -149,22 +124,26 @@ export function NewsPage() {
 
       {searchQuery && (
         <p className="mb-4 text-sm text-gray-600">
-          Menampilkan {paginatedNews.length} dari {filteredNews.length} hasil untuk "{searchQuery}"
+          Menampilkan {filteredNews.length} dari {allNews.length} hasil untuk "{searchQuery}"
         </p>
       )}
 
-      {paginatedNews.length === 0 ? (
+      {filteredNews.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">Belum ada berita</p>
+          <p className="text-gray-500">
+            {searchQuery ? "Tidak ada hasil yang cocok" : "Belum ada berita"}
+          </p>
         </div>
       ) : (
         <>
-          <NewsList items={paginatedNews} onNewsClick={handleNewsClick} />
-          <Pagination
-            pagination={pagination}
-            onPageChange={handlePageChange}
-            showingLabel={`Menampilkan ${paginatedNews.length} dari ${pagination.totalItems} berita`}
-          />
+          <NewsList items={filteredNews} onNewsClick={handleNewsClick} />
+          {!searchQuery && (
+            <Pagination
+              pagination={pagination}
+              onPageChange={handlePageChange}
+              showingLabel={`Menampilkan ${filteredNews.length} dari ${pagination.totalItems} berita`}
+            />
+          )}
         </>
       )}
     </div>

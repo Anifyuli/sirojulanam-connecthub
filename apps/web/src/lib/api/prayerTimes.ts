@@ -3,20 +3,24 @@ import { apiClient } from "./client";
 export interface PrayerTime {
   id: number;
   date: string;
+  shortDate: string;
+  longDate: string;
+  day: string;
   city: string;
-  subuh: string;
-  dzuhur: string;
-  ashar: string;
-  maghrib: string;
-  isya: string;
+  province: string;
+  imsak: string;
+  fajr: string;
   sunrise: string;
   dhuha: string;
+  dhuhr: string;
+  asr: string;
+  maghrib: string;
+  isha: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface PaginationInfo {
-  page: number;
   limit: number;
   total: number;
   totalPages: number;
@@ -25,8 +29,13 @@ export interface PaginationInfo {
 }
 
 export interface PrayerTimesResponse {
+  success: boolean;
   data: PrayerTime[];
-  pagination: PaginationInfo;
+}
+
+export interface PrayerTimeByDateResponse {
+  success: boolean;
+  data: PrayerTime;
 }
 
 export const prayerTimesService = {
@@ -50,12 +59,12 @@ export const prayerTimesService = {
   },
 
   async getById(id: number): Promise<PrayerTime> {
-    const response = await apiClient.get<PrayerTime>(`/prayer-times/${id}`);
-    return response.data;
+    const response = await apiClient.get<{ success: boolean; data: PrayerTime }>(`/prayer-times/${id}`);
+    return response.data.data;
   },
 
   async getByDateAndCity(date: string, city: string): Promise<PrayerTime> {
-    const response = await apiClient.get<PrayerTime>(`/prayer-times/date/${date}/city/${city}`);
-    return response.data;
+    const response = await apiClient.get<PrayerTimeByDateResponse>(`/prayer-times/date/${date}/city/${city}`);
+    return response.data.data;
   },
 };

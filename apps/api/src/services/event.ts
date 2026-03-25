@@ -10,15 +10,22 @@ export interface EventTagDto {
   tags: string[];
 }
 
+function parseDateTime(value: string | Date | undefined | null): Date | undefined {
+  if (!value) return undefined;
+  if (value instanceof Date) return value;
+  return new Date(value.replace('T', ' ') + ':00');
+}
+
 export class EventService {
   constructor(private readonly em: EntityManager) { }
 
-  private async mapToResponse(event: Events): Promise<EventResponse> {
+  private async mapToResponse(event: Events, includeAdmin = false): Promise<EventResponse> {
     const tags = await this.getTags(Number(event.id));
 
-    return {
+    const response: EventResponse = {
       id: Number(event.id),
       categoryId: event.category?.id ? Number(event.category.id) : null,
+      categoryName: event.category?.name ?? null,
       adminId: event.admin.id,
       title: event.title,
       slug: event.slug,
@@ -35,15 +42,28 @@ export class EventService {
       createdAt: event.createdAt!,
       updatedAt: event.updatedAt!,
     };
+
+    if (includeAdmin) {
+      const admin = await this.em.findOne(Admins, { id: event.admin.id });
+      if (admin) {
+        response.admin = {
+          id: admin.id,
+          name: admin.name,
+          username: admin.username,
+        };
+      }
+    }
+
+    return response;
   }
 
-  async find(filter: EventFilter = {}, pagination: PaginationParams = {}): Promise<PaginatedResponse<EventResponse>> {
+   async find(filter: EventFilter = {}, pagination: PaginationParams = {}): Promise<PaginatedResponse<EventResponse>> {
     const page = pagination.page || 1;
     const limit = pagination.limit || 10;
     const offset = (page - 1) * limit;
-
+ 
     const where: any = {};
-
+ 
     if (filter.title) {
       where.title = { $contains: filter.title };
     }
@@ -56,18 +76,19 @@ export class EventService {
     if (filter.slug) {
       where.slug = filter.slug;
     }
-
+ 
     const [events, total] = await Promise.all([
       this.em.find(Events, where, {
+        populate: ['category'],
         orderBy: { createdAt: 'DESC' },
         limit,
         offset,
       }),
       this.em.count(Events, where),
     ]);
-
+ 
     const data = await Promise.all(events.map((event) => this.mapToResponse(event)));
-
+ 
     return {
       data,
       pagination: {
@@ -86,23 +107,23 @@ export class EventService {
   }
 
   async findByTitle(title: string): Promise<EventResponse | null> {
-    const event = await this.em.findOne(Events, { title });
+    const event = await this.em.findOne(Events, { title }, { populate: ['admin'] });
 
     if (!event) {
       return null;
     }
 
-    return this.mapToResponse(event);
+    return this.mapToResponse(event, true);
   }
 
-  async findById(id: number): Promise<EventResponse | null> {
-    const event = await this.em.findOne(Events, { id });
+   async findById(id: number): Promise<EventResponse | null> {
+    const event = await this.em.findOne(Events, { id }, { populate: ['admin', 'category'] });
 
     if (!event) {
       return null;
     }
 
-    return this.mapToResponse(event);
+    return this.mapToResponse(event, true);
   }
 
   async findByCategory(categoryId: number): Promise<EventResponse[]> {
@@ -110,16 +131,18 @@ export class EventService {
   }
 
   async create(data: CreateEventDto): Promise<EventResponse> {
+    const admin = await this.em.findOneOrFail(Admins, { id: data.adminId }, { populate: ['role'] });
+
     const event = new Events();
-    event.admin = this.em.getReference(Admins, data.adminId);
-    event.category = data.eventId ? this.em.getReference(EventCategories, data.eventId) : undefined;
+    event.admin = admin;
+    event.category = data.categoryId ? this.em.getReference(EventCategories, data.categoryId) : undefined;
     event.title = data.title;
     event.slug = data.slug;
     event.descriptionMd = data.descriptionMd;
     event.locationName = data.locationName;
     event.locationDetail = data.locationDetail;
-    event.startDatetime = data.startDatetime;
-    event.endDatetime = data.endDatetime;
+    event.startDatetime = parseDateTime(data.startDatetime);
+    event.endDatetime = data.endDatetime ? parseDateTime(data.endDatetime) : undefined;
     event.isAllDay = data.isAllDay ?? false;
     event.status = data.status as EventsStatus;
     event.coverImageUrl = data.coverImageUrl;
@@ -149,15 +172,15 @@ export class EventService {
     event.descriptionMd = data.descriptionMd;
     event.locationName = data.locationName;
     event.locationDetail = data.locationDetail;
-    event.startDatetime = data.startDatetime;
-    event.endDatetime = data.endDatetime;
+    event.startDatetime = parseDateTime(data.startDatetime);
+    event.endDatetime = data.endDatetime ? parseDateTime(data.endDatetime) : undefined;
     event.isAllDay = data.isAllDay ?? event.isAllDay;
     event.status = data.status as EventsStatus;
     event.coverImageUrl = data.coverImageUrl;
     event.isFree = data.isFree;
 
-    if (data.eventId !== undefined) {
-      event.category = data.eventId ? this.em.getReference(EventCategories, data.eventId) : undefined;
+    if (data.categoryId !== undefined) {
+      event.category = data.categoryId ? this.em.getReference(EventCategories, data.categoryId) : undefined;
     }
 
     if (data.tags !== undefined) {

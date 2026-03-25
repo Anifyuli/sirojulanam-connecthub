@@ -33,8 +33,8 @@ export class Events {
   @Property({ type: 'text', length: 65535, nullable: true })
   locationDetail?: string;
 
-  @Property()
-  startDatetime!: Date;
+  @Property({ nullable: true })
+  startDatetime?: Date;
 
   @Property({ nullable: true })
   endDatetime?: Date;

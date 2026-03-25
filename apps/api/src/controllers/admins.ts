@@ -55,7 +55,7 @@ export class AdminController {
   logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { refreshToken } = req.body;
-      const adminId = res.locals.admin.id;
+      const _adminId = res.locals.admin.id;
 
       if (refreshToken) {
         await this.authService.revoke(refreshToken);

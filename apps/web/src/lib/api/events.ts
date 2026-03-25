@@ -3,16 +3,20 @@ import { apiClient } from "./client";
 export interface Event {
   id: number;
   title: string;
-  content: string;
   slug: string;
-  excerpt: string;
-  thumbnail: string | null;
-  startDate: string;
-  endDate: string;
-  location: string | null;
-  isPublished: boolean;
-  authorId: number | null;
+  descriptionMd?: string;
+  locationName?: string;
+  locationDetail?: string;
+  startDatetime: string;
+  endDatetime?: string;
+  isAllDay: boolean;
+  status: string;
+  coverImageUrl?: string;
+  isFree: boolean;
   categoryId: number | null;
+  categoryName?: string;
+  adminId: number;
+  tags: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -33,6 +37,7 @@ export interface PaginationInfo {
 }
 
 export interface EventsResponse {
+  success: boolean;
   data: Event[];
   pagination: PaginationInfo;
 }
@@ -56,13 +61,13 @@ export const eventsService = {
   },
 
   async getById(id: number): Promise<Event> {
-    const response = await apiClient.get<Event>(`/events/${id}`);
-    return response.data;
+    const response = await apiClient.get<{ success: boolean; data: Event }>(`/events/${id}`);
+    return response.data.data;
   },
 
   async getBySlug(slug: string): Promise<Event> {
-    const response = await apiClient.get<Event>(`/events/slug/${slug}`);
-    return response.data;
+    const response = await apiClient.get<{ success: boolean; data: Event }>(`/events/slug/${slug}`);
+    return response.data.data;
   },
 
   async getByCategory(categoryId: number): Promise<EventsResponse> {

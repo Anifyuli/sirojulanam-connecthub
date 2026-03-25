@@ -54,7 +54,12 @@ export class BlogController {
         });
       }
 
-      res.json(blog);
+      await this.service.incrementViewCount(id);
+
+      res.json({
+        success: true,
+        data: blog,
+      });
     } catch (error) {
       next(error);
     }
@@ -80,7 +85,12 @@ export class BlogController {
         });
       }
 
-      res.json(blog);
+      await this.service.incrementViewCount(blog.id);
+
+      res.json({
+        success: true,
+        data: blog,
+      });
     } catch (error) {
       next(error);
     }

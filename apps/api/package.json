@@ -9,7 +9,8 @@
     "seed": "tsx ./src/seed.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/"
   },
   "dependencies": {
     "@mikro-orm/core": "^6.6.9",
@@ -26,6 +27,7 @@
     "morgan": "~1.9.1"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@jest/globals": "^30.3.0",
     "@mikro-orm/cli": "^6.6.9",
     "@mikro-orm/entity-generator": "^6.6.9",
@@ -39,14 +41,13 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.5.0",
-    "@types/supertest": "^7.2.0",
     "eslint": "^10.0.3",
+    "globals": "^17.4.0",
     "jest": "^30.3.0",
     "prettier": "^3.8.1",
-    "supertest": "^7.2.2",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.1"
   }
 }

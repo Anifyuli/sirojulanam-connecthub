@@ -5,10 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TableSkeleton, TableWrapper, Th, Td, Badge, EmptyState } from "./shared";
 import { ModalForm } from "./ModalForm";
-import { MdxEditor } from "./MdxEditor";
+import { QuillEditor } from "./QuillEditor";
 import { PreviewDialog } from "./PreviewDialog";
 import { Pagination } from "./Pagination";
-import { useAuth } from "@/context/AuthContext";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useAuth, type AuthUser } from "@/context/AuthContext";
 import api from "@/lib/api";
 
 interface BlogPost {
@@ -55,8 +65,15 @@ function generateSlug(title: string): string {
     .trim();
 }
 
+const canManagePost = (post: BlogPost, user: AuthUser | null): boolean => {
+  if (!user) return false;
+  if (user.role === "manager") return true;
+  return post.adminId === parseInt(user.userId);
+};
+
 export function BlogPage() {
   const { user } = useAuth();
+  const isManager = user?.role === "manager";
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({ page: 1, limit: 10, total: 0, totalPages: 0, hasNext: false, hasPrev: false });
@@ -69,6 +86,7 @@ export function BlogPage() {
   const [tagSuggestions, setTagSuggestions] = useState<TagSuggestion[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; post: BlogPost | null }>({ open: false, post: null });
 
   useEffect(() => {
     fetchPosts(pagination.page);
@@ -223,10 +241,13 @@ export function BlogPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async () => {
+    const post = deleteConfirm.post;
+    if (!post) return;
     try {
-      await api.delete(`/blogs/${id}`);
-      setPosts((prev) => prev.filter((p) => p.id !== id));
+      await api.delete(`/blogs/${post.id}`);
+      setPosts((prev) => prev.filter((p) => p.id !== post.id));
+      setDeleteConfirm({ open: false, post: null });
     } catch (error) {
       console.error("Failed to delete blog:", error);
     }
@@ -243,7 +264,7 @@ export function BlogPage() {
       <div className="flex items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">{posts.length} post(s) total</p>
         <Button size="sm" onClick={openAdd} className="gap-2">
-          <Plus className="w-4 h-4" /> Add Post
+          <Plus className="w-4 h-4" /> Tambah Artikel
         </Button>
       </div>
 
@@ -255,11 +276,11 @@ export function BlogPage() {
         <TableWrapper>
           <thead>
             <tr>
-              <Th className="w-auto">Title</Th>
+              <Th className="w-auto">Judul</Th>
               <Th className="w-auto">Slug</Th>
-              <Th className="w-auto">Tags</Th>
+              <Th className="w-auto">Tag</Th>
               <Th className="w-24">Published</Th>
-              <Th className="w-20 text-right">Actions</Th>
+              <Th className="w-20 text-right">Aksi</Th>
             </tr>
           </thead>
           <tbody>
@@ -268,9 +289,9 @@ export function BlogPage() {
                 <td colSpan={5}>
                   <EmptyState
                     icon={<BookOpen className="w-6 h-6 text-accent-foreground" />}
-                    title="No blog posts yet"
-                    description="Click 'Add Post' to write your first article."
-                    action={<Button size="sm" onClick={openAdd} className="gap-2"><Plus className="w-4 h-4" />Add Post</Button>}
+                    title="Belum ada artikel blog"
+                    description="Klik 'Tambah Artikel' untuk menulis artikel pertama Anda."
+                    action={<Button size="sm" onClick={openAdd} className="gap-2"><Plus className="w-4 h-4" />Tambah Artikel</Button>}
                   />
                 </td>
               </tr>
@@ -291,20 +312,24 @@ export function BlogPage() {
                   </Td>
                   <Td>
                     <Badge variant={p.isPublished === true ? "active" : "draft"}>
-                      {p.isPublished === true ? "Published" : "Draft"}
+                      {p.isPublished === true ? "Dipublikasikan" : "Draf"}
                     </Badge>
                   </Td>
                   <Td className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <Button variant="ghost" size="icon" className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => openPreview(p)} title="Preview">
+                      <Button variant="ghost" size="icon" className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => openPreview(p)} title="Pratinjau">
                         <Eye className="w-3.5 h-3.5" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => openEdit(p)} title="Edit">
-                        <Pencil className="w-3.5 h-3.5" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive" onClick={() => handleDelete(p.id)} title="Delete">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
+                      {canManagePost(p, user) && (
+                        <>
+                          <Button variant="ghost" size="icon" className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => openEdit(p)} title="Ubah">
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive" onClick={() => setDeleteConfirm({ open: true, post: p })} title="Hapus">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </Td>
                 </tr>
@@ -331,14 +356,14 @@ export function BlogPage() {
       <ModalForm
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editTarget ? "Edit Post" : "Add New Post"}
+        title={editTarget ? "Edit Artikel" : "Tambah Artikel Baru"}
         onSubmit={handleSave}
-        submitLabel={editTarget ? "Update" : "Publish"}
+        submitLabel={editTarget ? "Perbarui" : "Publikasikan"}
         wide
       >
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="bl-title">Title</Label>
+            <Label htmlFor="bl-title">Judul</Label>
             <Input
               id="bl-title"
               placeholder="e.g. Keutamaan Bulan Ramadan"
@@ -357,14 +382,14 @@ export function BlogPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="bl-category">Category</Label>
+              <Label htmlFor="bl-category">Kategori</Label>
               <select
                 id="bl-category"
                 className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 value={form.categoryId}
                 onChange={(e) => setForm((p) => ({ ...p, categoryId: e.target.value }))}
               >
-                <option value="">Select category</option>
+                <option value="">Pilih kategori</option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
@@ -378,12 +403,12 @@ export function BlogPage() {
                 value={form.isPublished ? "published" : "draft"}
                 onChange={(e) => setForm((p) => ({ ...p, isPublished: e.target.value === "published" }))}
               >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
+                <option value="draft">Draf</option>
+                <option value="published">Dipublikasikan</option>
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="bl-published">Publish Date</Label>
+              <Label htmlFor="bl-published">Tanggal Publikasi</Label>
               <Input
                 id="bl-published"
                 type="datetime-local"
@@ -393,7 +418,7 @@ export function BlogPage() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="bl-excerpt">Excerpt (optional)</Label>
+            <Label htmlFor="bl-excerpt">Ringkasan (opsional)</Label>
             <Input
               id="bl-excerpt"
               placeholder="Brief summary of the article..."
@@ -402,8 +427,8 @@ export function BlogPage() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label>Content (Markdown)</Label>
-            <MdxEditor
+            <Label>Konten</Label>
+            <QuillEditor
               value={form.contentMd}
               onChange={(v) => setForm((p) => ({ ...p, contentMd: v }))}
               placeholder="Write your article content in Markdown..."
@@ -411,7 +436,7 @@ export function BlogPage() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="bl-tags">Tags</Label>
+            <Label htmlFor="bl-tags">Tag</Label>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <Input
@@ -471,6 +496,23 @@ export function BlogPage() {
         type="blog"
         data={previewData}
       />
+
+      <AlertDialog open={deleteConfirm.open} onOpenChange={(v) => !v && setDeleteConfirm({ open: false, post: null })}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Post</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus post "{deleteConfirm.post?.title}"? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

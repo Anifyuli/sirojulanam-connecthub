@@ -6,13 +6,35 @@
   --font-mono: 'Geist Mono', monospace;
   --font-serif: 'Amiri', serif;
 
+  /* Colors - Cyan (matching web) */
+  --color-cyan-100: #cefefd;
+  --color-cyan-200: #9ef8fd;
+  --color-cyan-300: #6de9fa;
+  --color-cyan-400: #48d4f6;
+  --color-cyan-500: #0eb5f1;
+  --color-cyan-600: #0a8dcf;
+  --color-cyan-700: #076aad;
+  --color-cyan-800: #044b8b;
+  --color-cyan-900: #023673;
+
+  /* Colors - Gray */
+  --color-gray-100: #f0f1f9;
+  --color-gray-200: #e2e4f3;
+  --color-gray-300: #c4c8dc;
+  --color-gray-400: #a1a4ba;
+  --color-gray-500: #73768c;
+  --color-gray-600: #545778;
+  --color-gray-700: #393e64;
+  --color-gray-800: #242851;
+  --color-gray-900: #161943;
+
   --color-background: oklch(0.978 0.006 140);
-  --color-foreground: oklch(0.22 0.02 150);
+  --color-foreground: oklch(0.145 0.02 150);
   --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.22 0.02 150);
+  --color-card-foreground: oklch(0.145 0.02 150);
   --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.22 0.02 150);
-  --color-primary: oklch(0.52 0.13 155);
+  --color-popover-foreground: oklch(0.145 0.02 150);
+  --color-primary: oklch(0.55 0.15 200);
   --color-primary-foreground: oklch(1 0 0);
   --color-secondary: oklch(0.94 0.025 145);
   --color-secondary-foreground: oklch(0.3 0.05 150);
@@ -24,8 +46,8 @@
   --color-destructive-foreground: oklch(1 0 0);
   --color-border: oklch(0.9 0.018 145);
   --color-input: oklch(0.9 0.018 145);
-  --color-ring: oklch(0.52 0.13 155);
-  --color-chart-1: oklch(0.52 0.13 155);
+  --color-ring: oklch(0.55 0.15 200);
+  --color-chart-1: oklch(0.55 0.15 200);
   --color-chart-2: oklch(0.65 0.11 175);
   --color-chart-3: oklch(0.78 0.09 135);
   --color-chart-4: oklch(0.68 0.08 200);
@@ -34,14 +56,14 @@
   --radius-md: 0.375rem;
   --radius-sm: 0.25rem;
   --radius-xs: 0.125rem;
-  --color-sidebar: oklch(0.26 0.04 155);
-  --color-sidebar-foreground: oklch(0.95 0.008 145);
-  --color-sidebar-primary: oklch(0.52 0.13 155);
+  --color-sidebar: oklch(0.35 0.1 160);
+  --color-sidebar-foreground: oklch(1 0 0);
+  --color-sidebar-primary: oklch(0.6 0.15 160);
   --color-sidebar-primary-foreground: oklch(1 0 0);
-  --color-sidebar-accent: oklch(0.32 0.05 152);
-  --color-sidebar-accent-foreground: oklch(0.95 0.008 145);
-  --color-sidebar-border: oklch(0.32 0.04 155);
-  --color-sidebar-ring: oklch(0.52 0.13 155);
+  --color-sidebar-accent: oklch(0.45 0.1 160);
+  --color-sidebar-accent-foreground: oklch(1 0 0);
+  --color-sidebar-border: oklch(0.3 0.08 160);
+  --color-sidebar-ring: oklch(0.6 0.15 160);
 }
 
 @layer base {

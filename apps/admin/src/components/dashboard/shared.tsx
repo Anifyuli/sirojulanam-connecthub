@@ -68,11 +68,11 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-accent mb-4">
-        {icon ?? <PackageOpen className="w-6 h-6 text-accent-foreground" />}
+    <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+      <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-accent mb-3">
+        {icon ?? <PackageOpen className="w-5 h-5 text-accent-foreground" />}
       </div>
-      <p className="text-base font-semibold text-foreground mb-1 text-balance">{title}</p>
+      <p className="text-sm font-semibold text-foreground mb-1 text-balance">{title}</p>
       {description && (
         <p className="text-sm text-muted-foreground max-w-xs mb-5 text-pretty">{description}</p>
       )}
@@ -115,14 +115,14 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon, subtext }: StatCardProps) {
   return (
-    <div className="bg-card rounded-xl border border-border p-5 flex flex-col gap-3">
+    <div className="bg-card rounded-xl border border-border p-3 flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center text-accent-foreground">
+        <p className="text-xs font-medium text-muted-foreground">{title}</p>
+        <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-accent-foreground">
           {icon}
         </div>
       </div>
-      <p className="text-3xl font-semibold text-foreground tracking-tight">{value}</p>
+      <p className="text-2xl font-semibold text-foreground tracking-tight">{value}</p>
       {subtext && <p className="text-xs text-muted-foreground">{subtext}</p>}
     </div>
   );

@@ -20,7 +20,7 @@ export class PrayerTimesController {
       if (endDate) filter.endDate = endDate as string;
 
       const prayerTimes = await this.service.find(filter);
-      res.json({ data: prayerTimes });
+      res.json({ success: true, data: prayerTimes });
     } catch (error) {
       next(error);
     }

@@ -1,17 +1,16 @@
 import { apiClient } from "./client";
 
 export interface JumatSchedule {
-  id: number;
-  date: string;
+  pasaran: string;
   imam: string;
-  khotbah: string;
-  createdAt: string;
-  updatedAt: string;
+  khotib: string;
+  bilal: string;
 }
 
 export interface ResponseWithTotal<T> {
+  success: boolean;
   data: T[];
-  total: number;
+  total?: number;
 }
 
 export const jumatSchedulesService = {
@@ -21,7 +20,7 @@ export const jumatSchedulesService = {
   },
 
   async getByPasaran(pasaran: string): Promise<JumatSchedule> {
-    const response = await apiClient.get<JumatSchedule>(`/jumat-schedules/${pasaran}`);
-    return response.data;
+    const response = await apiClient.get<{ success: boolean; data: JumatSchedule }>(`/jumat-schedules/${pasaran}`);
+    return response.data.data;
   },
 };

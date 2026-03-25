@@ -4,7 +4,7 @@ import { BlogPage } from "@/components/dashboard/BlogPage";
 export default function BlogManagementPage() {
   return (
     <>
-      <Header title="Blog Management" description="Write and publish articles for your community." />
+      <Header title="Kelola Blog" description="Tulis dan publikasikan artikel untuk komunitas Anda." />
       <main className="flex-1"><BlogPage /></main>
     </>
   );

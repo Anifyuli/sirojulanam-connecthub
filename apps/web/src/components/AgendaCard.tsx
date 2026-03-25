@@ -9,9 +9,10 @@ export interface AgendaEvent {
 
 export interface AgendaCardProps {
   event: AgendaEvent;
+  onClick?: (event: AgendaEvent) => void;
 }
 
-export function AgendaCard({ event }: AgendaCardProps) {
+export function AgendaCard({ event, onClick }: AgendaCardProps) {
   const dateObj = new Date(event.date);
   const dayName = dateObj.toLocaleDateString("id-ID", { weekday: "short" });
   const day = dateObj.getDate();
@@ -19,7 +20,10 @@ export function AgendaCard({ event }: AgendaCardProps) {
   const year = dateObj.getFullYear();
 
   return (
-    <div className="flex rounded-[16px] bg-white p-4 shadow-sm border-2 border-gray-100 transition-all duration-200 hover:shadow-md hover:border-cyan-200">
+    <div 
+      className="flex rounded-[16px] bg-white p-4 shadow-sm border-2 border-gray-100 transition-all duration-200 hover:shadow-md hover:border-cyan-200 cursor-pointer"
+      onClick={() => onClick?.(event)}
+    >
       {/* Date Section - Left */}
       <div className="flex flex-col items-center justify-center rounded-[12px] bg-cyan-100 px-4 py-3 text-cyan-900 min-w-[80px]">
         <span className="text-[11px] font-bold uppercase tracking-wide">
@@ -87,12 +91,14 @@ export interface AgendaListProps {
   events?: AgendaEvent[];
   filter?: "all" | "upcoming" | "past";
   className?: string;
+  onEventClick?: (event: AgendaEvent) => void;
 }
 
 export function AgendaList({
   events = [],
   filter = "all",
   className = "",
+  onEventClick,
 }: AgendaListProps) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -117,7 +123,7 @@ export function AgendaList({
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
       {filteredEvents.map((event) => (
-        <AgendaCard key={event.id} event={event} />
+        <AgendaCard key={event.id} event={event} onClick={onEventClick} />
       ))}
     </div>
   );

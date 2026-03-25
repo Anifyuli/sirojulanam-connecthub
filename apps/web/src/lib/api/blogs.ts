@@ -41,6 +41,7 @@ export interface PaginationInfo {
 }
 
 export interface BlogsResponse {
+  success: boolean;
   data: BlogPost[];
   pagination: PaginationInfo;
 }
@@ -62,13 +63,13 @@ export const blogsService = {
   },
 
   async getById(id: number): Promise<BlogPost> {
-    const response = await apiClient.get<BlogPost>(`/blogs/${id}`);
-    return response.data;
+    const response = await apiClient.get<{ success: boolean; data: BlogPost }>(`/blogs/${id}`);
+    return response.data.data;
   },
 
   async getBySlug(slug: string): Promise<BlogPost> {
-    const response = await apiClient.get<BlogPost>(`/blogs/slug/${slug}`);
-    return response.data;
+    const response = await apiClient.get<{ success: boolean; data: BlogPost }>(`/blogs/slug/${slug}`);
+    return response.data.data;
   },
 
   async getByCategory(categoryId: number): Promise<BlogsResponse> {

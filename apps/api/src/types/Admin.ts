@@ -34,6 +34,7 @@ export interface AdminResponse {
   name: string;
   email: string;
   roleId: number;
+  roleName: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

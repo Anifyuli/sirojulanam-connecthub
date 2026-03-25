@@ -176,7 +176,7 @@ export class PrayerTimesService {
 
       return results;
     } catch (error) {
-      throw new Error(`Gagal mengambil jadwal sholat: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new Error(`Gagal mengambil jadwal sholat: ${error instanceof Error ? error.message : "Unknown error"}`, { cause: error });
     }
   }
 

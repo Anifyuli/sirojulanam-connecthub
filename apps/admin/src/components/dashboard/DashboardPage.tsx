@@ -79,9 +79,9 @@ export function DashboardPage() {
 
         const now = new Date();
         const upcoming = events
-          .filter((e: any) => new Date(e.startDatetime) >= now)
+          .filter((e: { startDatetime: string }) => new Date(e.startDatetime) >= now)
           .slice(0, 3)
-          .map((e: any) => ({
+          .map((e: { id: number; title: string; startDatetime: string; locationName?: string; status: string }) => ({
             id: e.id,
             title: e.title,
             date: new Date(e.startDatetime).toLocaleDateString("id-ID"),
@@ -92,7 +92,7 @@ export function DashboardPage() {
 
         const posts = (blogsRes.data.data || [])
           .slice(0, 3)
-          .map((p: any) => ({
+          .map((p: { id: number; title: string; category?: { name: string }; admin?: { name: string }; publishedAt?: string }) => ({
             id: p.id,
             title: p.title,
             category: p.category?.name || "-",
@@ -103,7 +103,7 @@ export function DashboardPage() {
 
         const vids = (videosRes.data.data || [])
           .slice(0, 3)
-          .map((v: any) => ({
+          .map((v: { id: number; title: string; sourceType: string; durationSeconds?: number }) => ({
             id: v.id,
             title: v.title,
             type: v.sourceType,
@@ -121,26 +121,26 @@ export function DashboardPage() {
   }, []);
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 md:p-6 lg:p-8 space-y-4">
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)
         ) : (
           <>
-            <StatCard title="Total Events" value={stats.totalEvents} icon={<CalendarDays className="w-4 h-4" />} subtext="Total events" />
-            <StatCard title="Blog Posts" value={stats.totalBlogs} icon={<BookOpen className="w-4 h-4" />} subtext="Total posts" />
-            <StatCard title="Videos" value={stats.totalVideos} icon={<Video className="w-4 h-4" />} subtext="Total videos" />
-            <StatCard title="Prayer Schedules" value={stats.totalPrayerSchedules} icon={<Clock className="w-4 h-4" />} subtext="Total schedules" />
+            <StatCard title="Total Acara" value={stats.totalEvents} icon={<CalendarDays className="w-4 h-4" />} subtext="Total acara" />
+            <StatCard title="Artikel Blog" value={stats.totalBlogs} icon={<BookOpen className="w-4 h-4" />} subtext="Total artikel" />
+            <StatCard title="Video" value={stats.totalVideos} icon={<Video className="w-4 h-4" />} subtext="Total video" />
+            <StatCard title="Jadwal Sholat" value={stats.totalPrayerSchedules} icon={<Clock className="w-4 h-4" />} subtext="Total jadwal" />
           </>
         )}
       </div>
 
       {/* Two column layout */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         {/* Upcoming Events */}
         <section>
-          <h2 className="text-base font-semibold text-foreground mb-3">Upcoming Events</h2>
+          <h2 className="text-base font-semibold text-foreground mb-2">Acara Mendatang</h2>
           {loading ? (
             <div className="bg-card rounded-xl border border-border">
               <TableSkeleton rows={3} cols={3} />
@@ -150,8 +150,8 @@ export function DashboardPage() {
               <thead>
                 <tr>
                   <Th>Event</Th>
-                  <Th>Date</Th>
-                  <Th>Location</Th>
+                  <Th>Tanggal</Th>
+                  <Th>Lokasi</Th>
                   <Th>Status</Th>
                 </tr>
               </thead>
@@ -161,8 +161,8 @@ export function DashboardPage() {
                     <td colSpan={4}>
                       <EmptyState
                         icon={<CalendarDays className="w-6 h-6 text-accent-foreground" />}
-                        title="No upcoming events"
-                        description="Add your first event to see it here."
+                        title="Tidak ada acara mendatang"
+                        description="Tambahkan acara pertama Anda untuk melihatnya di sini."
                       />
                     </td>
                   </tr>
@@ -187,7 +187,7 @@ export function DashboardPage() {
 
         {/* Latest Blog Posts */}
         <section>
-          <h2 className="text-base font-semibold text-foreground mb-3">Latest Blog Posts</h2>
+          <h2 className="text-base font-semibold text-foreground mb-2">Artikel Blog Terbaru</h2>
           {loading ? (
             <div className="bg-card rounded-xl border border-border">
               <TableSkeleton rows={3} cols={3} />
@@ -196,10 +196,8 @@ export function DashboardPage() {
             <TableWrapper>
               <thead>
                 <tr>
-                  <Th>Title</Th>
-                  <Th>Category</Th>
-                  <Th>Author</Th>
-                  <Th>Date</Th>
+                  <Th>Judul</Th>
+                  <Th>Penulis</Th>
                 </tr>
               </thead>
               <tbody>
@@ -208,8 +206,8 @@ export function DashboardPage() {
                     <td colSpan={4}>
                       <EmptyState
                         icon={<BookOpen className="w-6 h-6 text-accent-foreground" />}
-                        title="No blog posts yet"
-                        description="Start writing your first post."
+                        title="Belum ada artikel blog"
+                        description="Mulai menulis artikel pertama Anda."
                       />
                     </td>
                   </tr>
@@ -217,13 +215,11 @@ export function DashboardPage() {
                   latestPosts.map((p) => (
                     <tr key={p.id} className="hover:bg-muted/30 transition-colors">
                       <Td className="font-medium">{p.title}</Td>
-                      <Td><Badge>{p.category}</Badge></Td>
                       <Td>
                         <span className="flex items-center gap-1.5 text-muted-foreground">
                           <User className="w-3.5 h-3.5 shrink-0" />{p.author}
                         </span>
                       </Td>
-                      <Td className="text-muted-foreground tabular-nums">{p.date}</Td>
                     </tr>
                   ))
                 )}
@@ -235,7 +231,7 @@ export function DashboardPage() {
 
       {/* Recent Videos */}
       <section>
-        <h2 className="text-base font-semibold text-foreground mb-3">Recent Videos</h2>
+        <h2 className="text-base font-semibold text-foreground mb-3">Video Terbaru</h2>
         {loading ? (
           <div className="bg-card rounded-xl border border-border">
             <TableSkeleton rows={3} cols={3} />

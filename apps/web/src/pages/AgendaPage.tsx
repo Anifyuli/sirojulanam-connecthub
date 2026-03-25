@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { AgendaList, type AgendaEvent } from "../components/AgendaCard";
 import { Pagination, type PaginationData } from "../components/Pagination";
+import { EventModal } from "../components/EventModal";
 import { eventsService, type Event } from "../lib/api";
 import { Search } from "iconoir-react";
 
@@ -9,18 +10,18 @@ const ITEMS_PER_PAGE = 5;
 type TabType = "all" | "upcoming" | "past";
 
 function mapEventToAgendaEvent(event: Event): AgendaEvent {
-  const startDate = new Date(event.startDate);
-  const endDate = new Date(event.endDate);
-  const formatTime = (date: Date) => 
+  const startDate = new Date(event.startDatetime);
+  const endDate = event.endDatetime ? new Date(event.endDatetime) : startDate;
+  const formatTime = (date: Date) =>
     `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
-  
+
   return {
     id: event.id,
     title: event.title,
-    date: event.startDate.split("T")[0],
+    date: event.startDatetime.split("T")[0],
     time: `${formatTime(startDate)} - ${formatTime(endDate)}`,
-    location: event.location || undefined,
-    description: event.excerpt || undefined,
+    location: event.locationName || undefined,
+    description: typeof event.descriptionMd === 'string' ? event.descriptionMd.replace(/<[^>]*>/g, '').substring(0, 200) : undefined,
   };
 }
 
@@ -30,6 +31,7 @@ export function AgendaPage() {
   const [loading, setLoading] = useState(true);
   const [allEvents, setAllEvents] = useState<AgendaEvent[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState<AgendaEvent | null>(null);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -51,9 +53,9 @@ export function AgendaPage() {
   const filteredAgenda = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     let filtered = allEvents;
-    
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -62,7 +64,7 @@ export function AgendaPage() {
           (event.location && event.location.toLowerCase().includes(query))
       );
     }
-    
+
     return filtered.filter((event) => {
       const eventDate = new Date(event.date);
       eventDate.setHours(0, 0, 0, 0);
@@ -98,9 +100,13 @@ export function AgendaPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-3 py-8 md:px-6">
-      <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">
-        Agenda Kegiatan
-      </h1>
+
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold text-gray-900">Agenda Sirojul Anam</h1>
+        <p className="mt-1.5 text-gray-500">
+          Kegiatan yang akan dilaksanakan dalam waktu dekat
+        </p>
+      </div>
 
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
@@ -170,7 +176,11 @@ export function AgendaPage() {
         </div>
       ) : (
         <>
-          <AgendaList events={paginatedAgenda} filter={activeTab} />
+          <AgendaList
+            events={paginatedAgenda}
+            filter={activeTab}
+            onEventClick={setSelectedEvent}
+          />
 
           <Pagination
             pagination={pagination}
@@ -179,6 +189,11 @@ export function AgendaPage() {
           />
         </>
       )}
+
+      <EventModal
+        event={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+      />
     </div>
   );
 }

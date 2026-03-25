@@ -49,12 +49,13 @@ export class VideoController {
       const video = await this.service.findById(id);
 
       if (!video) {
-        res.status(404).json({
+        return res.status(404).json({
           success: false,
           error: "Video not found",
         });
-        return;
       }
+
+      await this.service.incrementViewCount(id);
 
       res.json({
         success: true,
@@ -86,6 +87,8 @@ export class VideoController {
         });
         return;
       }
+
+      await this.service.incrementViewCount(video.id);
 
       res.json({
         success: true,

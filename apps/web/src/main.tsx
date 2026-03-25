@@ -7,6 +7,9 @@ import { NewsPage } from "./pages/NewsPage";
 import { BlogPostPage } from "./pages/BlogPostPage";
 import { AgendaPage } from "./pages/AgendaPage";
 import { VideoPage } from "./pages/VideoPage";
+import { AboutPage } from "./pages/AboutPage";
+import { PrivacyPage } from "./pages/PrivacyPage";
+import { TermsPage } from "./pages/TermsPage";
 import "./main.css";
 
 const router = createBrowserRouter([
@@ -19,6 +22,9 @@ const router = createBrowserRouter([
       { path: "news/:slug", element: <BlogPostPage /> },
       { path: "agenda", element: <AgendaPage /> },
       { path: "video", element: <VideoPage /> },
+      { path: "about", element: <AboutPage /> },
+      { path: "privacy", element: <PrivacyPage /> },
+      { path: "terms", element: <TermsPage /> },
     ],
   },
 ]);

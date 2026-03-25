@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await api.get("/auth/me");
       if (res.data.success && res.data.data?.user) {
         const u = res.data.data.user;
-        const roleName = (u.roleId === 1 ? "manager" : "editor");
+        const roleName = (u.roleName || "").toLowerCase();
         const userData = {
           userId: String(u.id),
           email: u.email,
@@ -163,6 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");

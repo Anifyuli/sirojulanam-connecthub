@@ -41,12 +41,6 @@ import {
 } from "lucide-react";
 import api from "@/lib/api";
 import {
-  mockEventCategories,
-  mockBlogCategories,
-  mockVideoCategories,
-  mockEventTags,
-  mockBlogTags,
-  mockVideoTags,
   type Category,
   type Tag,
 } from "@/data/mock";
@@ -200,13 +194,11 @@ export function TaxonomyPage() {
       if (taxonomyType === "category") {
         const categories = getCurrentCategories();
         if (editCategory) {
-          console.log("Updating category:", `/taxonomies/${activeTab}/categories/${editCategory.id}`, { name, slug, colorHex });
-          const res = await api.put(`/taxonomies/${activeTab}/categories/${editCategory.id}`, {
+          await api.put(`/taxonomies/${activeTab}/categories/${editCategory.id}`, {
             name,
             slug,
             colorHex,
           });
-          console.log("Update response:", res.data);
           setCurrentCategories(
             categories.map((c) =>
               c.id === editCategory.id
@@ -215,13 +207,11 @@ export function TaxonomyPage() {
             )
           );
         } else {
-          console.log("Creating category:", `/taxonomies/${activeTab}/categories`, { name, slug: slug || generateSlug(name), colorHex });
           const res = await api.post(`/taxonomies/${activeTab}/categories`, {
             name,
             slug: slug || generateSlug(name),
             colorHex,
           });
-          console.log("Create response:", res.data);
           const newCat: Category = {
             id: res.data.id,
             name,
@@ -244,7 +234,7 @@ export function TaxonomyPage() {
           );
         } else {
           // Create new tag via API
-          const res = await api.post(`/taxonomies/${activeTab}/tags`, {
+          await api.post(`/taxonomies/${activeTab}/tags`, {
             tag: tagName,
           });
           const newTag: Tag = {
@@ -304,10 +294,10 @@ export function TaxonomyPage() {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-foreground tracking-tight text-balance">
-          Tags & Categories
+          Tag & Kategori
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Kelola kategori dan tag untuk event, blog, dan video
@@ -417,7 +407,7 @@ export function TaxonomyPage() {
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => openEditCategory(cat)}>
                                   <Pencil className="w-4 h-4 mr-2" />
-                                  Edit
+                                  Ubah
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   className="text-destructive focus:text-destructive"
@@ -498,7 +488,7 @@ export function TaxonomyPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => openEditTag(tag)}>
                             <Pencil className="w-4 h-4 mr-2" />
-                            Edit
+                            Ubah
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-destructive focus:text-destructive"

@@ -2,7 +2,7 @@ import type { ReactNode, ButtonHTMLAttributes } from 'react';
 
 type ButtonSize = 'small' | 'medium' | 'large';
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
-type ButtonColor = 'aqua' | 'blue' | 'lime' | 'cyan' | 'yellow' | 'orange' | 'gray';
+type ButtonColor = 'aqua' | 'blue' | 'lime' | 'cyan' | 'yellow' | 'orange' | 'gray' | 'white' | 'emerald';
 type ButtonColorShade = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -76,6 +76,18 @@ const colorVariants = {
     secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300',
     outline: 'border-2 border-gray-500 text-gray-500 hover:bg-gray-500 hover:text-white',
     ghost: 'text-gray-500 hover:bg-gray-500/10 active:bg-gray-500/20',
+  },
+  white: {
+    primary: 'bg-white text-emerald-700 hover:bg-gray-100 active:bg-gray-200',
+    secondary: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 active:bg-emerald-300',
+    outline: 'border-2 border-white text-white hover:bg-white hover:text-emerald-700',
+    ghost: 'text-white hover:bg-white/10 active:bg-white/20',
+  },
+  emerald: {
+    primary: 'text-white',
+    secondary: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 active:bg-emerald-300',
+    outline: 'border-2 border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white',
+    ghost: 'text-emerald-500 hover:bg-emerald-500/10 active:bg-emerald-500/20',
   },
 };
 

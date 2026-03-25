@@ -4,7 +4,7 @@ import { JumatScheduleController } from "../controllers/jumatSchedules.ts";
 import { authMiddleware } from "../middleware/auth.ts";
 
 const router = express.Router();
-const controller = (req: express.Request) => new JumatScheduleController(RequestContext.getEntityManager()!);
+const controller = (_req: express.Request) => new JumatScheduleController(RequestContext.getEntityManager()!);
 
 router.get("/", (req, res, next) => controller(req).getAll(req, res, next));
 router.post("/", authMiddleware, (req, res, next) => controller(req).create(req, res, next));

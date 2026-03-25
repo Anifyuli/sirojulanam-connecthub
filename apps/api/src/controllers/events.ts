@@ -26,7 +26,10 @@ export class EventController {
       };
 
       const result = await this.service.find(filter, pagination);
-      res.json(result);
+      res.json({
+        success: true,
+        ...result,
+      });
     } catch (error) {
       next(error);
     }

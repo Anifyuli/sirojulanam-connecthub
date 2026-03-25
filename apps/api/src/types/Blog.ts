@@ -45,7 +45,17 @@ export interface BlogPostFilter {
 export interface BlogPostResponse {
   id: number;
   categoryId: number | null;
+  category?: {
+    id: number;
+    name: string;
+    slug: string;
+  };
   adminId: number;
+  admin?: {
+    id: number;
+    name: string;
+    username: string;
+  };
   title: string;
   slug: string;
   excerpt: string;

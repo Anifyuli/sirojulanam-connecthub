@@ -1,0 +1,33 @@
+import { defineConfig } from 'tsup';
+
+export default defineConfig({
+  entry: ['./src/bin/www'],
+  format: ['esm'],
+  target: 'node18',
+  platform: 'node',
+  splitting: false,
+  sourcemap: false,
+  minify: false,
+  dts: false,
+  bundle: true,
+  external: [
+    '@mikro-orm/core',
+    '@mikro-orm/mariadb',
+    '@mikro-orm/reflection',
+    '@mikro-orm/migrations',
+    '@mikro-orm/entity-generator',
+    '@ts-morph/common',
+    'ts-morph',
+    'mikro-orm',
+    'bcrypt',
+    'jsonwebtoken',
+    'axios',
+    'cookie-parser',
+    'cors',
+    'debug',
+    'dotenv',
+    'express',
+    'morgan',
+  ],
+  outDir: 'dist',
+});

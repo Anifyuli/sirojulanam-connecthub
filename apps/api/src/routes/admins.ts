@@ -5,7 +5,7 @@ import { authMiddleware } from "../middleware/auth.ts";
 
 const router = express.Router();
 
-const controller = (req: express.Request) => new AdminController(RequestContext.getEntityManager()!);
+const controller = (_req: express.Request) => new AdminController(RequestContext.getEntityManager()!);
 
 router.post('/login', (req, res, next) => controller(req).login(req, res, next));
 router.post('/register', (req, res, next) => controller(req).register(req, res, next));

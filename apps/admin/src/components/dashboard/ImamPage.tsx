@@ -20,7 +20,6 @@ interface DailyPrayerSchedule {
 }
 
 interface JumatSchedule {
-  id: number;
   pasaran: Pasaran;
   imam: string;
   khotib: string;
@@ -52,11 +51,11 @@ const defaultDailySchedules: DailyPrayerSchedule[] = [
 ];
 
 const defaultJumatSchedules: JumatSchedule[] = [
-  { id: 1, pasaran: "pon", imam: "", khotib: "", bilal: "" },
-  { id: 2, pasaran: "wage", imam: "", khotib: "", bilal: "" },
-  { id: 3, pasaran: "kliwon", imam: "", khotib: "", bilal: "" },
-  { id: 4, pasaran: "legi", imam: "", khotib: "", bilal: "" },
-  { id: 5, pasaran: "pahing", imam: "", khotib: "", bilal: "" },
+  { pasaran: "pon", imam: "", khotib: "", bilal: "" },
+  { pasaran: "wage", imam: "", khotib: "", bilal: "" },
+  { pasaran: "kliwon", imam: "", khotib: "", bilal: "" },
+  { pasaran: "legi", imam: "", khotib: "", bilal: "" },
+  { pasaran: "pahing", imam: "", khotib: "", bilal: "" },
 ];
 
 export function ImamPage() {
@@ -79,10 +78,14 @@ export function ImamPage() {
   const fetchSchedules = async () => {
     try {
       setLoading(true);
-      const [jumatRes] = await Promise.all([
+      const [dailyRes, jumatRes] = await Promise.all([
+        api.get("/daily-prayer-schedules").catch(() => ({ data: { success: true, data: [] } })),
         api.get("/jumat-schedules").catch(() => ({ data: { success: true, data: defaultJumatSchedules } })),
       ]);
 
+      if (dailyRes.data.success && dailyRes.data.data.length > 0) {
+        setDailySchedules(dailyRes.data.data);
+      }
       if (jumatRes.data.success && jumatRes.data.data.length > 0) {
         setJumatSchedules(jumatRes.data.data);
       }
@@ -99,12 +102,18 @@ export function ImamPage() {
     setDailyModalOpen(true);
   };
 
-  const handleSaveDaily = () => {
+  const handleSaveDaily = async () => {
     if (!editDailyTarget) return;
-    setDailySchedules((prev) =>
-      prev.map((s) => s.prayTime === editDailyTarget.prayTime ? { ...s, imam: dailyForm.imam } : s)
-    );
-    setDailyModalOpen(false);
+
+    try {
+      await api.put(`/daily-prayer-schedules/${editDailyTarget.prayTime}`, { imam: dailyForm.imam });
+      setDailySchedules((prev) =>
+        prev.map((s) => s.prayTime === editDailyTarget.prayTime ? { ...s, imam: dailyForm.imam } : s)
+      );
+      setDailyModalOpen(false);
+    } catch (error) {
+      console.error("Failed to update daily prayer schedule:", error);
+    }
   };
 
   const openEditJumat = (schedule: JumatSchedule) => {
@@ -134,7 +143,7 @@ export function ImamPage() {
   };
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 md:p-6 lg:p-8 space-y-4">
       <Tabs defaultValue="daily" className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="daily" className="gap-2">
@@ -147,7 +156,7 @@ export function ImamPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="daily" className="space-y-6">
+        <TabsContent value="daily" className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h3 className="font-semibold text-foreground">Jadwal Imam Sholat 5 Waktu</h3>
@@ -204,7 +213,7 @@ export function ImamPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="jumat" className="space-y-6">
+        <TabsContent value="jumat" className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h3 className="font-semibold text-foreground">Jadwal Sholat Jum'at (Pasaran Jawa)</h3>
@@ -285,7 +294,7 @@ export function ImamPage() {
       <ModalForm
         open={dailyModalOpen}
         onClose={() => setDailyModalOpen(false)}
-        title={`Edit Imam ${editDailyTarget ? prayTimeLabels[editDailyTarget.prayTime].label : ""}`}
+        title={`Ubah Imam ${editDailyTarget ? prayTimeLabels[editDailyTarget.prayTime].label : ""}`}
         onSubmit={handleSaveDaily}
         submitLabel="Simpan"
       >
@@ -305,7 +314,7 @@ export function ImamPage() {
       <ModalForm
         open={jumatModalOpen}
         onClose={() => setJumatModalOpen(false)}
-        title={`Edit Petugas ${editJumatTarget ? pasaranLabels[editJumatTarget.pasaran] : ""}`}
+        title={`Ubah Petugas ${editJumatTarget ? pasaranLabels[editJumatTarget.pasaran] : ""}`}
         onSubmit={handleSaveJumat}
         submitLabel="Simpan"
       >

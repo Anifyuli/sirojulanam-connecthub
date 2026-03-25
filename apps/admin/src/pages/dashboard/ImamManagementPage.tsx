@@ -4,7 +4,7 @@ import { ImamPage } from "@/components/dashboard/ImamPage";
 export default function ImamManagementPage() {
   return (
     <>
-      <Header title="Imam Management" description="Manage imam profiles, roles, and schedules." />
+      <Header title="Kelola Imam" description="Kelola profil, peran, dan jadwal imam." />
       <main className="flex-1"><ImamPage /></main>
     </>
   );

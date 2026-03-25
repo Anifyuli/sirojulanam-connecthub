@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryKey, PrimaryKeyProp, Property, type Rel } from '@mikro-orm/core';
+import { Entity, ManyToOne, PrimaryKeyProp, Property, type Rel } from '@mikro-orm/core';
 import { BlogPosts } from './BlogPosts.ts';
 
 @Entity()

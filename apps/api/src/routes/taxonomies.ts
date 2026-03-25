@@ -4,7 +4,7 @@ import { TaxonomyService, TaxonomyType } from "../services/taxonomy.ts";
 import { authMiddleware } from "../middleware/auth.ts";
 
 const router = express.Router();
-const getService = (req: express.Request) => new TaxonomyService(RequestContext.getEntityManager()!);
+const getService = (_req: express.Request) => new TaxonomyService(RequestContext.getEntityManager()!);
 
 const validTypes: TaxonomyType[] = ["event", "blog", "video"];
 

@@ -4,7 +4,7 @@ import { SettingsPage as SettingsContent } from "@/components/dashboard/Settings
 export default function SettingsPage() {
   return (
     <>
-      <Header title="Settings" description="Manage mosque information and admin account." />
+      <Header title="Setelan" description="Ubah setelan akun" />
       <main className="flex-1"><SettingsContent /></main>
     </>
   );

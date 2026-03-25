@@ -5,8 +5,8 @@ export default function DashboardIndexPage() {
   return (
     <>
       <Header
-        title="Dashboard"
-        description="Welcome back. Here's an overview of your mosque."
+        title="Dasbor"
+        description="Selamat datang. Berikut ringkasan masjid Anda."
       />
       <main className="flex-1">
         <DashboardPage />

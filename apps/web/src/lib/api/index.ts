@@ -4,4 +4,5 @@ export { eventsService, type Event, type EventCategory, type EventsResponse } fr
 export { videosService, type Video, type VideoCategory, type VideosResponse } from "./videos";
 export { prayerTimesService, type PrayerTime, type PrayerTimesResponse } from "./prayerTimes";
 export { jumatSchedulesService, type JumatSchedule, type ResponseWithTotal } from "./jumatSchedules";
+export { dailyPrayerSchedulesService, type DailyPrayerSchedule } from "./dailyPrayerSchedules";
 export { taxonomyService, type Category, type Tag } from "./taxonomies";

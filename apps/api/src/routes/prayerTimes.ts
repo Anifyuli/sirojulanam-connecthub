@@ -4,7 +4,7 @@ import { PrayerTimesController } from "../controllers/prayerTimes.ts";
 import { authMiddleware } from "../middleware/auth.ts";
 
 const router = express.Router();
-const controller = (req: express.Request) => new PrayerTimesController(RequestContext.getEntityManager()!);
+const controller = (_req: express.Request) => new PrayerTimesController(RequestContext.getEntityManager()!);
 
 router.get("/", (req, res, next) => controller(req).getAll(req, res, next));
 router.post("/fetch", authMiddleware, (req, res, next) => controller(req).fetchFromEquranId(req, res, next));

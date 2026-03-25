@@ -4,7 +4,7 @@ import { EventsPage } from "@/components/dashboard/EventsPage";
 export default function EventManagementPage() {
   return (
     <>
-      <Header title="Event Management" description="Create and manage mosque events and programs." />
+      <Header title="Kelola Acara" description="Buat dan kelola acara dan program masjid." />
       <main className="flex-1"><EventsPage /></main>
     </>
   );

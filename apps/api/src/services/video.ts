@@ -87,8 +87,10 @@ export class VideoService {
   }
 
   async create(data: CreateVideoDto): Promise<VideoResponse> {
+    const admin = await this.em.findOneOrFail(Admins, { id: data.adminId }, { populate: ['role'] });
+    
     const video = new Videos();
-    video.admin = this.em.getReference(Admins, data.adminId);
+    video.admin = admin;
     video.category = data.categoryId ? this.em.getReference(VideoCategories, data.categoryId) : undefined;
     video.title = data.title;
     video.slug = data.slug;

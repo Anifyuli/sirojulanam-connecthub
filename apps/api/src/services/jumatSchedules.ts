@@ -18,6 +18,11 @@ export class JumatScheduleService {
     };
   }
 
+  async findAll(): Promise<JumatScheduleResponse[]> {
+    const schedules = await this.em.find(JumatSchedules, {});
+    return schedules.map((schedule) => this.mapToResponse(schedule));
+  }
+
   async create(data: CreateJumatSchedulesDto): Promise<JumatScheduleResponse> {
     const schedule = new JumatSchedules();
     schedule.pasaran = data.pasaran;

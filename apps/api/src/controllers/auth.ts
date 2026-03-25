@@ -41,6 +41,7 @@ export class AuthController {
             name: adminData.name,
             email: adminData.email,
             roleId: adminData.roleId,
+            roleName: adminData.roleName,
             isActive: adminData.isActive,
           },
         },

@@ -4,7 +4,7 @@ import { VideoPage } from "@/components/dashboard/VideoPage";
 export default function VideoManagementPage() {
   return (
     <>
-      <Header title="Video Management" description="Upload videos or add YouTube Shorts and TikTok links." />
+      <Header title="Kelola Video" description="Unggah video atau tambahkan tautan YouTube Shorts dan TikTok." />
       <main className="flex-1"><VideoPage /></main>
     </>
   );

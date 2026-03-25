@@ -1,5 +1,4 @@
 export interface CreateEventDto {
-  eventId?: number | null;
   categoryId: number | null;
   adminId: number;
   title: string;
@@ -7,19 +6,18 @@ export interface CreateEventDto {
   descriptionMd?: unknown;
   locationName?: string;
   locationDetail?: string;
-  startDatetime: Date;
-  endDatetime: Date;
+  startDatetime?: Date;
+  endDatetime?: Date;
   isAllDay?: boolean;
   status: string;
   coverImageUrl?: string;
   isFree: boolean;
   tags?: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface UpdateEventDto {
-  eventId?: number | null;
   categoryId?: number | null;
   adminId: number;
   title: string;
@@ -27,14 +25,14 @@ export interface UpdateEventDto {
   descriptionMd?: unknown;
   locationName?: string;
   locationDetail?: string;
-  startDatetime: Date;
-  endDatetime: Date;
+  startDatetime?: Date;
+  endDatetime?: Date;
   isAllDay?: boolean;
   status: string;
   coverImageUrl?: string;
   isFree: boolean;
   tags?: string[];
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export interface EventFilter {
@@ -51,14 +49,20 @@ export interface EventDto {
 export interface EventResponse {
   id: number;
   categoryId: number | null;
+  categoryName?: string | null;
   adminId: number;
+  admin?: {
+    id: number;
+    name: string;
+    username: string;
+  };
   title: string;
   slug: string;
   descriptionMd?: unknown;
   tags?: string[];
   locationName?: string;
   locationDetail?: string;
-  startDatetime: Date;
+  startDatetime?: Date;
   endDatetime?: Date;
   isAllDay?: boolean;
   status: string;

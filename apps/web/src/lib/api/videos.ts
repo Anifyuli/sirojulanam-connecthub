@@ -3,15 +3,21 @@ import { apiClient } from "./client";
 export interface Video {
   id: number;
   title: string;
-  description: string;
   slug: string;
-  thumbnail: string | null;
-  embedUrl: string;
-  sourcePlatform: "youtube" | "tiktok" | "instagram" | "facebook" | "other";
-  sourceUrl: string;
+  description?: string;
+  sourceType: string;
+  sourceUrl?: string;
+  platformVideoId?: string;
+  localFileUrl?: string;
+  thumbnailUrl?: string;
+  durationSeconds?: number;
   isPublished: boolean;
-  authorId: number | null;
+  isFeatured: boolean;
+  publishedAt?: string;
+  viewCount?: number;
   categoryId: number | null;
+  adminId: number;
+  tags: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -32,6 +38,7 @@ export interface PaginationInfo {
 }
 
 export interface VideosResponse {
+  success: boolean;
   data: Video[];
   pagination: PaginationInfo;
 }
@@ -53,13 +60,13 @@ export const videosService = {
   },
 
   async getById(id: number): Promise<Video> {
-    const response = await apiClient.get<Video>(`/videos/${id}`);
-    return response.data;
+    const response = await apiClient.get<{ success: boolean; data: Video }>(`/videos/${id}`);
+    return response.data.data;
   },
 
   async getBySlug(slug: string): Promise<Video> {
-    const response = await apiClient.get<Video>(`/videos/slug/${slug}`);
-    return response.data;
+    const response = await apiClient.get<{ success: boolean; data: Video }>(`/videos/slug/${slug}`);
+    return response.data.data;
   },
 
   async getByCategory(categoryId: number): Promise<VideosResponse> {

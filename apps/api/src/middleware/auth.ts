@@ -22,7 +22,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   try {
     res.locals.admin = verifyAccessToken(token);
     next();
-  } catch (error) {
+  } catch (_error) {
     return res.status(401).json({
       success: false,
       code: "INVALID_TOKEN",
