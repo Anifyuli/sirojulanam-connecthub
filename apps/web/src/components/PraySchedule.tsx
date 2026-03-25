@@ -233,7 +233,7 @@ export function PraySchedule() {
                     <p className="text-sm font-medium text-gray-800">{jumatSchedules[0]?.imam}</p>
                   </div>
                   <div className="text-center p-2 bg-white rounded-lg">
-                    <p className="text-[12px] uppercase text-cyan-600 font-bold">Khotbah</p>
+                    <p className="text-[12px] uppercase text-cyan-600 font-bold">Khotib</p>
                     <p className="text-sm font-medium text-gray-800">{jumatSchedules[0]?.khotib}</p>
                   </div>
                   <div className="text-center p-2 bg-white rounded-lg">
