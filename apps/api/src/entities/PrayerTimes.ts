@@ -25,28 +25,28 @@ export class PrayerTimes {
   @Property({ type: 'string' })
   province!: string;
 
-  @Property({ type: 'time' })
+  @Property({ type: 'string', length: 8 })
   imsak!: string;
 
-  @Property({ type: 'time' })
+  @Property({ type: 'string', length: 8 })
   fajr!: string;
 
-  @Property({ type: 'time' })
+  @Property({ type: 'string', length: 8 })
   sunrise!: string;
 
-  @Property({ type: 'time' })
+  @Property({ type: 'string', length: 8 })
   dhuha!: string;
 
-  @Property({ type: 'time' })
+  @Property({ type: 'string', length: 8 })
   dhuhr!: string;
 
-  @Property({ type: 'time' })
+  @Property({ type: 'string', length: 8 })
   asr!: string;
 
-  @Property({ type: 'time' })
+  @Property({ type: 'string', length: 8 })
   maghrib!: string;
 
-  @Property({ type: 'time' })
+  @Property({ type: 'string', length: 8 })
   isha!: string;
 
   @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })

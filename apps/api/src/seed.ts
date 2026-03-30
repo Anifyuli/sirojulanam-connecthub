@@ -80,7 +80,7 @@ async function seed() {
   }
 
   // ─── Prayer Times (full month) ────────────────────────────────
-  const city = "Pati";
+  const city = "Kab. Pati";
   const province = "Jawa Tengah";
   const today = new Date();
   const year = today.getFullYear();

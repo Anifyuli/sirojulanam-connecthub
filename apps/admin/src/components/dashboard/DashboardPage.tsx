@@ -59,9 +59,9 @@ export function DashboardPage() {
     async function fetchDashboardData() {
       try {
         const [eventsRes, blogsRes, videosRes, prayerRes] = await Promise.all([
-          api.get("/events").catch(() => ({ data: { data: [], pagination: { total: 0 } } })),
-          api.get("/blogs").catch(() => ({ data: { data: [], pagination: { total: 0 } } })),
-          api.get("/videos").catch(() => ({ data: { data: [], pagination: { total: 0 } } })),
+          api.get("/admin/events").catch(() => ({ data: { data: [], pagination: { total: 0 } } })),
+          api.get("/admin/blogs").catch(() => ({ data: { data: [], pagination: { total: 0 } } })),
+          api.get("/admin/videos").catch(() => ({ data: { data: [], pagination: { total: 0 } } })),
           api.get("/prayer-times").catch(() => ({ data: { data: [] } })),
         ]);
 
@@ -158,7 +158,7 @@ export function DashboardPage() {
               <tbody>
                 {upcomingEvents.length === 0 ? (
                   <tr>
-                    <td colSpan={4}>
+                    <td colSpan={4} className="text-center">
                       <EmptyState
                         icon={<CalendarDays className="w-6 h-6 text-accent-foreground" />}
                         title="Tidak ada acara mendatang"
@@ -203,7 +203,7 @@ export function DashboardPage() {
               <tbody>
                 {latestPosts.length === 0 ? (
                   <tr>
-                    <td colSpan={4}>
+                    <td colSpan={4} className="text-center">
                       <EmptyState
                         icon={<BookOpen className="w-6 h-6 text-accent-foreground" />}
                         title="Belum ada artikel blog"
@@ -248,7 +248,7 @@ export function DashboardPage() {
             <tbody>
               {recentVideos.length === 0 ? (
                 <tr>
-                  <td colSpan={3}>
+                  <td colSpan={3} className="text-center">
                     <EmptyState
                       icon={<Video className="w-6 h-6 text-accent-foreground" />}
                       title="No videos uploaded"

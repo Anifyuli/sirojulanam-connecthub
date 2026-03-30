@@ -80,14 +80,11 @@ export function BlogPostPage() {
 
       {/* Featured Image */}
       {blog.coverImageUrl && (
-        <div className="mb-8 overflow-hidden rounded-xl shadow-lg">
+        <div className="mb-8 -mx-3 md:mx-0">
           <img
             src={blog.coverImageUrl}
             alt={blog.title}
-            className="h-[300px] w-full object-cover md:h-[400px]"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "https://placehold.co/800x400/0eb5f1/ffffff?text=" + encodeURIComponent(blog.title);
-            }}
+            className="w-full h-64 md:h-80 object-cover rounded-xl"
           />
         </div>
       )}

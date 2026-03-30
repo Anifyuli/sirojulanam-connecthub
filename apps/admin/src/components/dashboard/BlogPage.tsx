@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, BookOpen, Eye, X, Tag } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Plus, Pencil, Trash2, BookOpen, Eye, X, Tag, Upload, Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -87,6 +87,11 @@ export function BlogPage() {
   const [tagInput, setTagInput] = useState("");
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; post: BlogPost | null }>({ open: false, post: null });
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+  const [importingUrl, setImportingUrl] = useState(false);
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchPosts(pagination.page);
@@ -121,7 +126,7 @@ export function BlogPage() {
   const fetchPosts = async (page: number = 1) => {
     try {
       setLoading(true);
-      const res = await api.get("/blogs", { params: { page, limit: 10 } });
+      const res = await api.get("/admin/blogs", { params: { page, limit: 10 } });
       setPosts(res.data.data);
       setPagination(res.data.pagination);
     } catch (error) {
@@ -227,12 +232,12 @@ export function BlogPage() {
 
     try {
       if (editTarget) {
-        const res = await api.put(`/blogs/${editTarget.id}`, payload);
+        const res = await api.put(`/admin/blogs/${editTarget.id}`, payload);
         setPosts((prev) =>
           prev.map((p) => (p.id === editTarget.id ? { ...p, ...res.data } : p))
         );
       } else {
-        const res = await api.post("/blogs", payload);
+        const res = await api.post("/admin/blogs", payload);
         setPosts((prev) => [...prev, res.data]);
       }
       setModalOpen(false);
@@ -241,11 +246,64 @@ export function BlogPage() {
     }
   };
 
+  const handleUploadThumbnail = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Ukuran file maksimal 10MB");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      alert("Hanya file gambar yang diizinkan");
+      return;
+    }
+
+    setUploadingThumbnail(true);
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await api.post("/admin/figure-images/upload", formData);
+      setForm((prev) => ({ ...prev, coverImageUrl: res.data.data.url }));
+    } catch (error) {
+      console.error("Failed to upload thumbnail:", error);
+      alert("Gagal mengunggah thumbnail");
+    } finally {
+      setUploadingThumbnail(false);
+      if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
+    }
+  };
+
+  const handleImportThumbnailUrl = async () => {
+    if (!urlInput.trim()) return;
+
+    setImportingUrl(true);
+    try {
+      const res = await api.post("/admin/figure-images/import-url", {
+        imageUrl: urlInput.trim(),
+      });
+      setForm((prev) => ({ ...prev, coverImageUrl: res.data.data.url }));
+      setUrlInput("");
+      setShowUrlInput(false);
+    } catch (error) {
+      console.error("Failed to import thumbnail:", error);
+      alert("Gagal mengimpor thumbnail dari URL");
+    } finally {
+      setImportingUrl(false);
+    }
+  };
+
+  const clearThumbnail = () => {
+    setForm((prev) => ({ ...prev, coverImageUrl: "" }));
+  };
+
   const handleDelete = async () => {
     const post = deleteConfirm.post;
     if (!post) return;
     try {
-      await api.delete(`/blogs/${post.id}`);
+      await api.delete(`/admin/blogs/${post.id}`);
       setPosts((prev) => prev.filter((p) => p.id !== post.id));
       setDeleteConfirm({ open: false, post: null });
     } catch (error) {
@@ -270,12 +328,13 @@ export function BlogPage() {
 
       {loading ? (
         <div className="bg-card rounded-xl border border-border">
-          <TableSkeleton rows={4} cols={4} />
+          <TableSkeleton rows={4} cols={6} />
         </div>
       ) : (
         <TableWrapper>
           <thead>
             <tr>
+              <Th className="w-20">Thumbnail</Th>
               <Th className="w-auto">Judul</Th>
               <Th className="w-auto">Slug</Th>
               <Th className="w-auto">Tag</Th>
@@ -286,7 +345,7 @@ export function BlogPage() {
           <tbody>
             {posts.length === 0 ? (
               <tr>
-                <td colSpan={5}>
+                <td colSpan={6} className="text-center">
                   <EmptyState
                     icon={<BookOpen className="w-6 h-6 text-accent-foreground" />}
                     title="Belum ada artikel blog"
@@ -298,6 +357,22 @@ export function BlogPage() {
             ) : (
               posts.map((p) => (
                 <tr key={p.id} className="hover:bg-muted/30 transition-colors group">
+                  <Td>
+                    {p.coverImageUrl ? (
+                      <img
+                        src={p.coverImageUrl}
+                        alt={p.title}
+                        className="w-12 h-12 object-cover rounded-md"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center">
+                        <BookOpen className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                    )}
+                  </Td>
                   <Td className="font-medium">{p.title}</Td>
                   <Td className="text-muted-foreground text-sm">{p.slug}</Td>
                   <Td>
@@ -425,6 +500,87 @@ export function BlogPage() {
               value={form.excerpt}
               onChange={(e) => setForm((p) => ({ ...p, excerpt: e.target.value }))}
             />
+          </div>
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <Label>Thumbnail</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => thumbnailInputRef.current?.click()}
+                  disabled={uploadingThumbnail}
+                  className="h-7 gap-1 text-xs"
+                >
+                  <Upload className="w-3 h-3" />
+                  {uploadingThumbnail ? "Mengunggah..." : "Unggah"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowUrlInput(!showUrlInput)}
+                  className="h-7 gap-1 text-xs"
+                >
+                  <Link className="w-3 h-3" />
+                  {showUrlInput ? "Sembunyikan" : "URL"}
+                </Button>
+              </div>
+            </div>
+            <input
+              ref={thumbnailInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleUploadThumbnail}
+              className="hidden"
+            />
+
+            {form.coverImageUrl && (
+              <div className="relative mt-2 rounded-lg border overflow-hidden">
+                <img
+                  src={form.coverImageUrl}
+                  alt="Thumbnail"
+                  className="w-full max-h-48 object-contain bg-muted"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23ccc' width='100' height='100'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='%23666' font-size='12'%3EGambar tidak tersedia%3C/text%3E%3C/svg%3E";
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-1 right-1 w-6 h-6"
+                  onClick={clearThumbnail}
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
+            )}
+
+            {showUrlInput && (
+              <div className="flex gap-2 mt-2">
+                <Input
+                  placeholder="Tempel URL gambar (https://...)"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleImportThumbnailUrl()}
+                />
+                <Button
+                  type="button"
+                  onClick={handleImportThumbnailUrl}
+                  disabled={importingUrl || !urlInput.trim()}
+                >
+                  {importingUrl ? "..." : "Import"}
+                </Button>
+              </div>
+            )}
+
+            {!form.coverImageUrl && !showUrlInput && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Klik "Unggah" untuk upload dari komputer atau "URL" untuk paste link gambar
+              </p>
+            )}
           </div>
           <div className="space-y-1.5">
             <Label>Konten</Label>

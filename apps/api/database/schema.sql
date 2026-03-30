@@ -247,3 +247,88 @@ CREATE TABLE `refresh_tokens` (
   KEY `refresh_tokens_admin_id_index` (`admin_id`),
   CONSTRAINT `refresh_tokens_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON UPDATE CASCADE
 );
+
+-- ============================================================
+--  QUOTES / KUTIPAN INSPIRATIF
+-- ============================================================
+
+CREATE TABLE quote_categories (
+  id        SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name      VARCHAR(100) NOT NULL,
+  slug      VARCHAR(120) NOT NULL UNIQUE,
+  color_hex CHAR(7),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE quotes (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  category_id     SMALLINT UNSIGNED,
+  admin_id        INT UNSIGNED NOT NULL,
+  content         TEXT NOT NULL,
+  source          VARCHAR(200),
+  is_published    BOOLEAN NOT NULL DEFAULT TRUE,
+  is_featured     BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_quote_category FOREIGN KEY (category_id) REFERENCES quote_categories(id) ON DELETE SET NULL,
+  CONSTRAINT fk_quote_admin    FOREIGN KEY (admin_id)    REFERENCES admins(id)
+);
+
+-- ============================================================
+--  TOKOH INSPIRATIF
+-- ============================================================
+
+CREATE TABLE inspirational_figures (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  admin_id        INT UNSIGNED NOT NULL,
+  name            VARCHAR(150) NOT NULL,
+  title           VARCHAR(100),
+  bio             TEXT,
+  image_url       VARCHAR(500),
+  birth_year      VARCHAR(10),
+  death_year      VARCHAR(10),
+  is_published    BOOLEAN NOT NULL DEFAULT TRUE,
+  is_featured     BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_figure_admin FOREIGN KEY (admin_id) REFERENCES admins(id)
+);
+
+-- ============================================================
+--  POSTS / STATUS (Opini ala Facebook)
+-- ============================================================
+
+CREATE TABLE posts (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  admin_id        INT UNSIGNED NOT NULL,
+  type            ENUM('opinion','quote_of_day','figure_spotlight') NOT NULL DEFAULT 'opinion',
+  title           VARCHAR(300) NOT NULL,
+  content         TEXT NOT NULL,
+  quote_id        BIGINT UNSIGNED,
+  figure_id       BIGINT UNSIGNED,
+  is_published    BOOLEAN NOT NULL DEFAULT TRUE,
+  view_count      INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_post_admin FOREIGN KEY (admin_id) REFERENCES admins(id),
+  CONSTRAINT fk_post_quote FOREIGN KEY (quote_id) REFERENCES quotes(id) ON DELETE SET NULL,
+  CONSTRAINT fk_post_figure FOREIGN KEY (figure_id) REFERENCES inspirational_figures(id) ON DELETE SET NULL
+);
+
+CREATE TABLE post_tags (
+  post_id BIGINT UNSIGNED NOT NULL,
+  tag     VARCHAR(80)     NOT NULL,
+  PRIMARY KEY (post_id, tag),
+  CONSTRAINT fk_ptag_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+);
+
+CREATE TABLE post_reactions (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  post_id         BIGINT UNSIGNED NOT NULL,
+  admin_id        INT UNSIGNED NOT NULL,
+  reaction_type   ENUM('like','love','inspiring','pray') NOT NULL,
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_reaction_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+  CONSTRAINT fk_reaction_admin FOREIGN KEY (admin_id) REFERENCES admins(id),
+  UNIQUE KEY uq_post_admin_reaction (post_id, admin_id, reaction_type)
+);

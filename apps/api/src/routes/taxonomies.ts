@@ -6,7 +6,7 @@ import { authMiddleware } from "../middleware/auth.ts";
 const router = express.Router();
 const getService = (_req: express.Request) => new TaxonomyService(RequestContext.getEntityManager()!);
 
-const validTypes: TaxonomyType[] = ["event", "blog", "video"];
+const validTypes: TaxonomyType[] = ["event", "blog", "video", "quote", "figure", "post"];
 
 function isValidType(type: string): type is TaxonomyType {
   return validTypes.includes(type as TaxonomyType);
@@ -21,7 +21,7 @@ router.get("/:type/categories", async (req, res) => {
     const type = getTypeParam(req.params.type);
 
     if (!isValidType(type)) {
-      return res.status(400).json({ error: "Invalid type. Must be: event, blog, or video" });
+      return res.status(400).json({ error: "Invalid type. Must be: event, blog, video, quote, figure, or post" });
     }
 
     const categories = await getService(req).getCategories(type);
@@ -38,7 +38,7 @@ router.get("/:type/categories/:id", async (req, res) => {
     const id = getTypeParam(req.params.id);
 
     if (!isValidType(type)) {
-      return res.status(400).json({ error: "Invalid type. Must be: event, blog, or video" });
+      return res.status(400).json({ error: "Invalid type. Must be: event, blog, video, quote, figure, or post" });
     }
 
     const category = await getService(req).getCategoryById(type, Number(id));
@@ -60,7 +60,7 @@ router.post("/:type/categories", authMiddleware, async (req, res) => {
     const { name, slug, colorHex } = req.body;
 
     if (!isValidType(type)) {
-      return res.status(400).json({ error: "Invalid type. Must be: event, blog, or video" });
+      return res.status(400).json({ error: "Invalid type. Must be: event, blog, video, quote, figure, or post" });
     }
 
     if (!name || !slug) {
@@ -82,7 +82,7 @@ router.put("/:type/categories/:id", authMiddleware, async (req, res) => {
     const { name, slug, colorHex } = req.body;
 
     if (!isValidType(type)) {
-      return res.status(400).json({ error: "Invalid type. Must be: event, blog, or video" });
+      return res.status(400).json({ error: "Invalid type. Must be: event, blog, video, quote, figure, or post" });
     }
 
     const category = await getService(req).updateCategory(type, Number(id), { name, slug, colorHex });
@@ -104,7 +104,7 @@ router.delete("/:type/categories/:id", authMiddleware, async (req, res) => {
     const id = getTypeParam(req.params.id);
 
     if (!isValidType(type)) {
-      return res.status(400).json({ error: "Invalid type. Must be: event, blog, or video" });
+      return res.status(400).json({ error: "Invalid type. Must be: event, blog, video, quote, figure, or post" });
     }
 
     const deleted = await getService(req).deleteCategory(type, Number(id));
@@ -125,7 +125,7 @@ router.get("/:type/tags", async (req, res) => {
     const type = getTypeParam(req.params.type);
 
     if (!isValidType(type)) {
-      return res.status(400).json({ error: "Invalid type. Must be: event, blog, or video" });
+      return res.status(400).json({ error: "Invalid type. Must be: event, blog, video, quote, figure, or post" });
     }
 
     const tags = await getService(req).getTags(type);
@@ -142,7 +142,7 @@ router.post("/:type/tags", authMiddleware, async (req, res) => {
     const { tag } = req.body;
 
     if (!isValidType(type)) {
-      return res.status(400).json({ error: "Invalid type. Must be: event, blog, or video" });
+      return res.status(400).json({ error: "Invalid type. Must be: event, blog, video, quote, figure, or post" });
     }
 
     if (!tag || typeof tag !== "string") {
@@ -173,7 +173,7 @@ router.delete("/:type/tags/:tag", authMiddleware, async (req, res) => {
     const tag = getTypeParam(req.params.tag);
 
     if (!isValidType(type)) {
-      return res.status(400).json({ error: "Invalid type. Must be: event, blog, or video" });
+      return res.status(400).json({ error: "Invalid type. Must be: event, blog, video, quote, figure, or post" });
     }
 
     const deleted = await getService(req).deleteTag(type, decodeURIComponent(tag));

@@ -2,21 +2,44 @@ import { useState, useEffect } from "react";
 import { PrayerCardGroup } from "./PrayerCardGroup";
 import { jumatSchedulesService, type JumatSchedule } from "../lib/api";
 
-async function getPasaranFromAPI(date: Date): Promise<string> {
+const PASARAN_CYCLE = ["Legi", "Pahing", "Pon", "Wage", "Kliwon"];
+
+/**
+ * Calculate pasaran for a given date using the 5-day cycle
+ * Reference: Known pasaran date - 1 January 2024 was Monday Legi
+ */
+function calculatePasaran(date: Date): string {
+  const anchorDate = new Date(2024, 0, 1); // January 1, 2024 (Legi)
+  
+  const diffTime = date.getTime() - anchorDate.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  // Handle negative days (dates before anchor)
+  const pasaranIndex = ((diffDays % 5) + 5) % 5;
+  return PASARAN_CYCLE[pasaranIndex];
+}
+
+async function getPasaranFromAPI(date: Date): Promise<string | null> {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
 
   try {
-    const response = await fetch(`https://tanggalanjawa.com/api/calendar?year=${year}&month=${month}&day=${day}`);
-    const data = await response.json();
-    if (data.pasaran) {
-      return data.pasaran;
+    // Use our backend proxy to avoid CORS issues
+    const response = await fetch(`/api/pasaran/calendar?year=${year}&month=${month}&day=${day}`);
+    
+    if (!response.ok) {
+      return null;
+    }
+    
+    const result = await response.json();
+    if (result.success && result.data.pasaran) {
+      return result.data.pasaran;
     }
   } catch (err) {
-    console.error("Failed to fetch pasaran:", err);
+    // Silently fail - will use calculation fallback
   }
-  return "";
+  return null;
 }
 
 function formatDate(date: Date): string {
@@ -80,35 +103,36 @@ export function PraySchedule() {
           const nextJumatDates = getNextJumatDates(5);
           const schedulesWithDates: ScheduleWithDate[] = [];
 
-          // Try to get accurate besok from API, fallback to sequential matching
-          try {
-            const besokList = await Promise.all(
-              nextJumatDates.map(d => getPasaranFromAPI(d).catch(() => ""))
+          // Try to get accurate pasaran from API (via proxy), fallback to calculation
+          const besokList = await Promise.all(
+            nextJumatDates.map(async (d) => {
+              const apiResult = await getPasaranFromAPI(d);
+              return apiResult || calculatePasaran(d);
+            })
+          );
+
+          // Match schedules based on pasaran
+          for (let i = 0; i < 5; i++) {
+            const pasaran = besokList[i];
+            const schedule = data.data.find(s =>
+              s.pasaran.toLowerCase() === pasaran.toLowerCase()
             );
-
-            for (let i = 0; i < 5; i++) {
-              const schedule = data.data.find(s =>
-                s.pasaran.toLowerCase() === besokList[i].toLowerCase()
-              );
-              if (schedule) {
-                schedulesWithDates.push({
-                  ...schedule,
-                  date: formatPasaranDate(nextJumatDates[i]),
-                  isNext: todayIsJumat && i === 0,
-                });
-              }
-            }
-          } catch (e) {
-            console.warn("External API failed, using fallback");
-          }
-
-          // Fallback: use sequential match if no matches found
-          if (schedulesWithDates.length === 0) {
-            for (let i = 0; i < Math.min(data.data.length, 5); i++) {
+            
+            if (schedule) {
               schedulesWithDates.push({
-                ...data.data[i],
+                ...schedule,
                 date: formatPasaranDate(nextJumatDates[i]),
-                isNext: i === 0,
+                isNext: todayIsJumat && i === 0,
+              });
+            } else {
+              // If no schedule found for this pasaran, use calculated pasaran
+              schedulesWithDates.push({
+                pasaran,
+                imam: "-",
+                khotib: "-",
+                bilal: "-",
+                date: formatPasaranDate(nextJumatDates[i]),
+                isNext: todayIsJumat && i === 0,
               });
             }
           }
@@ -182,7 +206,7 @@ export function PraySchedule() {
 
   return (
     <section className="w-full bg-white px-4 py-12 md:px-8">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8">
+      <div className="mx-auto flex w-full max-w-2xl lg:max-w-6xl flex-col gap-8">
         <div className="flex flex-col gap-8 md:flex-row md:items-stretch">
           {/* Left Side - Schedule & Date */}
           <div className="flex min-w-0 flex-1 flex-col justify-center py-4 gap-6">
@@ -250,15 +274,15 @@ export function PraySchedule() {
                 <h3 className="text-lg text-center font-bold text-cyan-900 uppercase tracking-wide mb-4">
                   Jadwal Jumat Lainnya
                 </h3>
-                <div className="bg-blue-50 rounded-xl p-4">
-                  <div className="flex px-2 py-2">
+                <div className="bg-blue-50 rounded-xl p-4 overflow-x-auto">
+                  <div className="flex px-2 py-2 min-w-[280px]">
                     <span className="font-bold text-base text-cyan-600 flex-1 uppercase">Pasaran</span>
                     <span className="font-bold text-base text-cyan-600 flex-1 text-center uppercase">Imam</span>
                     <span className="font-bold text-base text-cyan-600 flex-1 text-center uppercase">Khotib</span>
                     <span className="font-bold text-base text-cyan-600 flex-1 text-right uppercase">Bilal</span>
                   </div>
                   {jumatSchedules.slice(1).map((schedule, index) => (
-                    <div key={index} className="flex items-center px-2 py-3 last:border-0 gap-3">
+                    <div key={index} className="flex items-center px-2 py-3 last:border-0 gap-3 min-w-[280px]">
                       <span className="flex-1 font-medium text-cyan-800 text-sm capitalize">{schedule.pasaran}</span>
                       <span className="flex-1 text-center text-gray-600 text-sm">{schedule.imam}</span>
                       <span className="flex-1 text-center text-gray-600 text-sm">{schedule.khotib}</span>

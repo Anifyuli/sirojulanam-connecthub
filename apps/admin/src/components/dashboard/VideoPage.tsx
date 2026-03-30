@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Video, Youtube, Link2, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, Video, Eye } from "lucide-react";
+import { SiYoutube, SiYoutubeshorts, SiTiktok } from "@icons-pack/react-simple-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,9 +57,9 @@ interface PaginationInfo {
 
 const typeIcon: Record<string, React.ReactNode> = {
   local: <Video className="w-3.5 h-3.5" />,
-  youtube: <Youtube className="w-3.5 h-3.5" />,
-  youtube_shorts: <Youtube className="w-3.5 h-3.5" />,
-  tiktok: <Link2 className="w-3.5 h-3.5" />,
+  youtube: <SiYoutube className="w-3.5 h-3.5" />,
+  youtube_shorts: <SiYoutubeshorts className="w-3.5 h-3.5" />,
+  tiktok: <SiTiktok className="w-3.5 h-3.5" />,
 };
 
 const typeLabels: Record<string, string> = {
@@ -124,7 +125,7 @@ export function VideoPage() {
   const fetchVideos = async (page: number = 1) => {
     try {
       setLoading(true);
-      const res = await api.get("/videos", { params: { page, limit: 10 } });
+      const res = await api.get("/admin/videos", { params: { page, limit: 10 } });
       setVideos(res.data.data);
       setPagination(res.data.pagination);
     } catch (error) {
@@ -225,14 +226,14 @@ export function VideoPage() {
 
     try {
       if (editTarget) {
-        const res = await api.put(`/videos/${editTarget.id}`, payload);
+        const res = await api.put(`/admin/videos/${editTarget.id}`, payload);
         if (res.data.success) {
           setVideos((prev) =>
             prev.map((v) => (v.id === editTarget.id ? { ...v, ...payload } as unknown as VideoItem : v))
           );
         }
       } else {
-        const res = await api.post("/videos", payload);
+        const res = await api.post("/admin/videos", payload);
         if (res.data.success) {
           setVideos((prev) => [...prev, res.data.data]);
         }
@@ -247,7 +248,7 @@ export function VideoPage() {
     const video = deleteConfirm.video;
     if (!video) return;
     try {
-      await api.delete(`/videos/${video.id}`);
+      await api.delete(`/admin/videos/${video.id}`);
       setVideos((prev) => prev.filter((v) => v.id !== video.id));
       setDeleteConfirm({ open: false, video: null });
     } catch (error) {
@@ -284,7 +285,7 @@ export function VideoPage() {
           <tbody>
             {videos.length === 0 ? (
               <tr>
-                <td colSpan={5}>
+                <td colSpan={7} className="text-center">
                   <EmptyState
                     icon={<Video className="w-6 h-6 text-accent-foreground" />}
                     title="Belum ada video"

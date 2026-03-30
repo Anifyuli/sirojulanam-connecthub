@@ -10,14 +10,50 @@ export class BlogController {
     this.service = new BlogService(em);
   }
 
-  getAll = async (req: Request, res: Response, next: NextFunction) => {
+  getAllPublic = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { title, categoryId, isFeatured, slug, page, limit } = req.query;
+      const filter: any = {};
+
+      if (title) filter.title = title as string;
+      if (categoryId) filter.categoryId = parseInt(categoryId as string, 10);
+      if (isFeatured !== undefined) filter.isFeatured = isFeatured === "true";
+      if (slug) filter.slug = slug as string;
+      filter.isPublished = true;
+
+      const pagination = {
+        page: page ? parseInt(page as string, 10) : 1,
+        limit: limit ? parseInt(limit as string, 10) : 10,
+      };
+
+      const result = await this.service.find(filter, pagination);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getAllAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { title, categoryId, adminId, isPublished, isFeatured, slug, page, limit } = req.query;
       const filter: any = {};
 
       if (title) filter.title = title as string;
       if (categoryId) filter.categoryId = parseInt(categoryId as string, 10);
-      if (adminId) filter.adminId = parseInt(adminId as string, 10);
+      
+      const currentAdmin = res.locals.admin;
+      console.log("[DEBUG getAllAdmin] currentAdmin:", JSON.stringify(currentAdmin));
+      const isEditor = currentAdmin && currentAdmin.role !== "manager";
+      console.log("[DEBUG getAllAdmin] isEditor:", isEditor, "adminId param:", adminId);
+
+      if (isEditor && currentAdmin) {
+        filter.adminId = currentAdmin.id;
+      } else if (adminId) {
+        filter.adminId = parseInt(adminId as string, 10);
+      }
+
+      console.log("[DEBUG getAllAdmin] final filter:", JSON.stringify(filter));
+
       if (isPublished !== undefined) filter.isPublished = isPublished === "true";
       if (isFeatured !== undefined) filter.isFeatured = isFeatured === "true";
       if (slug) filter.slug = slug as string;

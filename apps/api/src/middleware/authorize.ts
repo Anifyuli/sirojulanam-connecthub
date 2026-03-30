@@ -15,20 +15,29 @@ export function getAuthUser(res: Response): AuthUser | undefined {
   return res.locals.admin as AuthUser | undefined;
 }
 
-type EntityType = "blog" | "video" | "event";
+type EntityType = "blog" | "video" | "event" | "quote" | "figure" | "post";
 
 const tableConfig: Record<EntityType, { tableName: string; adminColumn: string }> = {
   blog: { tableName: "blog_posts", adminColumn: "admin_id" },
   video: { tableName: "videos", adminColumn: "admin_id" },
   event: { tableName: "events", adminColumn: "admin_id" },
+  quote: { tableName: "quotes", adminColumn: "admin_id" },
+  figure: { tableName: "inspirational_figures", adminColumn: "admin_id" },
+  post: { tableName: "posts", adminColumn: "admin_id" },
 };
 
 export async function checkOwnership(
   em: EntityManager,
   resourceId: number,
   userId: number,
-  entityType: EntityType
+  entityType: EntityType,
+  userRole: string
 ): Promise<boolean> {
+  // Manager can edit all content, including orphaned content (from deleted editors)
+  if (userRole === "manager") {
+    return true;
+  }
+
   const { tableName, adminColumn } = tableConfig[entityType];
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,7 +50,13 @@ export async function checkOwnership(
     return false;
   }
   
-  const adminId = (result as { admin_id: bigint }[])[0]?.admin_id;
+  const adminId = (result as { admin_id: bigint | null }[])[0]?.admin_id;
+  
+  // If admin_id is null (orphaned content from deleted editor), only managers can access
+  if (adminId === null) {
+    return false;
+  }
+  
   return Number(adminId) === userId;
 }
 
@@ -80,7 +95,7 @@ export function authorizeOwnership(entityType: EntityType) {
       });
     }
 
-    const isOwner = await checkOwnership(em, resourceId, user.id, entityType);
+    const isOwner = await checkOwnership(em, resourceId, user.id, entityType, user.role);
 
     if (!isOwner) {
       return res.status(403).json({
@@ -92,4 +107,26 @@ export function authorizeOwnership(entityType: EntityType) {
 
     next();
   };
+}
+
+export function requireManager(_req: Request, res: Response, next: NextFunction) {
+  const user = getAuthUser(res);
+  
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      code: "UNAUTHORIZED",
+      message: "Unauthorized",
+    });
+  }
+
+  if (!isManager(user)) {
+    return res.status(403).json({
+      success: false,
+      code: "FORBIDDEN",
+      message: "Anda tidak memiliki akses untuk fitur ini",
+    });
+  }
+
+  next();
 }

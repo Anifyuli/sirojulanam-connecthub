@@ -3,12 +3,12 @@ import { Facebook, Mail, Map, Phone, Youtube } from "iconoir-react";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-gray-900 px-4 py-12 md:px-8">
+    <footer className="w-full bg-gray-900 px-4 py-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8">
         {/* Footer Top - Logo, Kontak, Info */}
-        <div className="flex flex-col gap-8 md:flex-row md:items-start">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start">
           {/* Left - Logo & Description */}
-          <div className="flex flex-1 flex-col gap-4">
+          <div className="flex flex-1 flex-col gap-3">
             <div className="flex flex-row items-center gap-3">
               <img
                 src={Logo}
@@ -24,7 +24,7 @@ export function Footer() {
               Layanan informasi seputar masjid dan berbagai kegiatan, pengumuman, maupun layanan masjid.
             </p>
             {/* Social Media */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <a href="https://www.facebook.com/masjid.sirojul.anam.wonokerto/" className="flex flex-row gap-2 text-gray-400 hover:text-white transition-colors" target="_blank">
                 <Facebook /> Masjid Sirojul Anam Wonokerto
               </a>
@@ -35,7 +35,7 @@ export function Footer() {
           </div>
 
           {/* Middle - Kontak */}
-          <div className="flex flex-1 flex-col gap-4">
+          <div className="flex flex-1 flex-col gap-3">
             <h3 className="font-semibold text-white">Kontak</h3>
             <ul className="flex flex-col gap-2 text-sm text-gray-400">
               <li>
@@ -58,7 +58,7 @@ export function Footer() {
           </div>
 
           {/* Right - Info */}
-          <div className="flex flex-1 flex-col gap-4">
+          <div className="flex flex-1 flex-col gap-3">
             <h3 className="font-semibold text-white">Info</h3>
             <ul className="flex flex-col gap-2 text-sm text-gray-400">
               <li>
@@ -81,7 +81,7 @@ export function Footer() {
         </div>
 
         {/* Footer Bottom - Copyright */}
-        <div className="border-t border-gray-800 pt-8">
+        <div className="border-t border-gray-800 pt-6">
           <p className="text-center text-sm text-gray-500">
             © 2026 Masjid Sirojul Anam. Hak cipta dilindungi undang-undang.
           </p>

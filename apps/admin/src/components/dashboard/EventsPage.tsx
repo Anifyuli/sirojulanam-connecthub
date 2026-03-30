@@ -120,7 +120,7 @@ export function EventsPage() {
   const fetchEvents = async (page: number = 1) => {
     try {
       setLoading(true);
-      const res = await api.get("/events", { params: { page, limit: 10 } });
+      const res = await api.get("/admin/events", { params: { page, limit: 10 } });
       if (res.data.success) {
         setEvents(res.data.data);
         setPagination(res.data.pagination);
@@ -241,7 +241,7 @@ export function EventsPage() {
 
     try {
       if (editTarget) {
-        const res = await api.put(`/events/${editTarget.id}`, payload);
+        const res = await api.put(`/admin/events/${editTarget.id}`, payload);
         if (res.data.success) {
           setEvents((prev) =>
             prev.map((e) => (e.id === editTarget.id ? res.data.data : e))
@@ -251,7 +251,7 @@ export function EventsPage() {
           toast({ title: "Gagal", description: res.data.error || "Gagal memperbarui event", variant: "destructive" });
         }
       } else {
-        const res = await api.post("/events", payload);
+        const res = await api.post("/admin/events", payload);
         if (res.data.success) {
           setEvents((prev) => [...prev, res.data.data]);
           toast({ title: "Berhasil", description: "Event berhasil ditambahkan" });
@@ -275,7 +275,7 @@ export function EventsPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await api.delete(`/events/${id}`);
+      await api.delete(`/admin/events/${id}`);
       setEvents((prev) => prev.filter((e) => e.id !== id));
       toast({ title: "Berhasil", description: "Event berhasil dihapus" });
     } catch (error: unknown) {
@@ -331,7 +331,7 @@ export function EventsPage() {
           <tbody>
             {events.length === 0 ? (
               <tr>
-                <td colSpan={7}>
+                <td colSpan={7} className="text-center">
                   <EmptyState
                     icon={<CalendarDays className="w-6 h-6 text-accent-foreground" />}
                     title="Belum ada acara"

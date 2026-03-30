@@ -46,8 +46,6 @@ function getEmbedUrl(video: Video): string {
 }
 
 function getThumbnail(video: Video): string {
-  if (video.thumbnailUrl) return video.thumbnailUrl;
-
   const sourceType = (video.sourceType || "").toLowerCase();
   const sourceUrl = video.sourceUrl || "";
   const platformVideoId = video.platformVideoId;

@@ -58,7 +58,7 @@ export class VideoService {
     return {
       id: Number(video.id),
       categoryId: video.category?.id ? Number(video.category.id) : null,
-      adminId: video.admin.id,
+      adminId: Number(video.admin.id),
       title: video.title,
       slug: video.slug,
       description: video.description ?? undefined,
@@ -66,7 +66,6 @@ export class VideoService {
       sourceUrl: video.sourceUrl ?? undefined,
       platformVideoId: video.platformVideoId ?? undefined,
       localFileUrl: video.localFileUrl ?? undefined,
-      thumbnailUrl: video.thumbnailUrl ?? undefined,
       durationSeconds: video.durationSeconds,
       isPublished: video.isPublished,
       isFeatured: video.isFeatured,
@@ -170,7 +169,6 @@ export class VideoService {
     video.sourceUrl = data.sourceUrl;
     video.platformVideoId = data.platformVideoId || extractPlatformVideoId(data.sourceType, data.sourceUrl);
     video.localFileUrl = data.localFileUrl;
-    video.thumbnailUrl = data.thumbnailUrl || generateThumbnailUrl(data.sourceType, data.sourceUrl, video.platformVideoId);
     video.durationSeconds = data.durationSeconds;
     video.isPublished = data.isPublished ?? false;
     video.isFeatured = data.isFeatured ?? false;
@@ -208,12 +206,6 @@ export class VideoService {
     }
     
     video.localFileUrl = data.localFileUrl ?? video.localFileUrl;
-    
-    if (data.thumbnailUrl !== undefined) {
-      video.thumbnailUrl = data.thumbnailUrl || generateThumbnailUrl(video.sourceType, video.sourceUrl, video.platformVideoId);
-    } else if (!video.thumbnailUrl) {
-      video.thumbnailUrl = generateThumbnailUrl(video.sourceType, video.sourceUrl, video.platformVideoId);
-    }
     
     video.durationSeconds = data.durationSeconds ?? video.durationSeconds;
     video.isPublished = data.isPublished ?? video.isPublished;

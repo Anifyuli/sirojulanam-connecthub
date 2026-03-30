@@ -186,4 +186,36 @@ export class PrayerTimesController {
       next(error);
     }
   };
+
+  update = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = parseInt(req.params.id as string, 10);
+      const data = req.body;
+
+      if (isNaN(id)) {
+        res.status(400).json({
+          success: false,
+          error: 'Invalid ID',
+        });
+        return;
+      }
+
+      const prayerTime = await this.service.update(id, data);
+
+      if (!prayerTime) {
+        res.status(404).json({
+          success: false,
+          error: 'Prayer time not found',
+        });
+        return;
+      }
+
+      res.json({
+        success: true,
+        data: prayerTime,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

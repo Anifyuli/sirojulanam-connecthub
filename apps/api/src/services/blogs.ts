@@ -5,6 +5,8 @@ import { BlogCategories } from "../entities/BlogCategories.ts";
 import { Admins } from "../entities/Admins.ts";
 import { CreateBlogPostDto, UpdateBlogPostDto, BlogPostFilter, BlogPostResponse } from "../types/Blog.ts";
 import { PaginationParams, PaginatedResponse } from "../types/pagination.ts";
+import { processQuillContent, cleanupOldImages } from "../lib/contentStorage.ts";
+import { processImageUrl } from "../lib/storage.ts";
 
 export class BlogService {
   constructor(private readonly em: EntityManager) { }
@@ -21,9 +23,9 @@ export class BlogService {
         name: blog.category.name,
         slug: blog.category.slug,
       } : undefined,
-      adminId: blog.admin.id,
+      adminId: Number(blog.admin.id),
       admin: blog.admin ? {
-        id: blog.admin.id,
+        id: Number(blog.admin.id),
         name: blog.admin.name,
         username: blog.admin.username,
       } : undefined,
@@ -31,7 +33,7 @@ export class BlogService {
       slug: blog.slug,
       excerpt: blog.excerpt ?? "",
       contentMd: String(blog.contentMd),
-      coverImageUrl: blog.coverImageUrl ?? "",
+      coverImageUrl: blog.coverImageUrl ?? undefined,
       isPublished: blog.isPublished,
       isFeatured: blog.isFeatured,
       publishedAt: blog.publishedAt!,
@@ -138,18 +140,20 @@ export class BlogService {
   async create(data: CreateBlogPostDto): Promise<BlogPostResponse> {
     const admin = await this.em.findOneOrFail(Admins, { id: data.adminId }, { populate: ['role'] });
     
+    const { html: processedContent } = await processQuillContent(data.contentMd);
+    const coverImageUrl = data.coverImageUrl ? await processImageUrl(data.coverImageUrl) : undefined;
+    
     const blog = new BlogPosts();
     blog.admin = admin;
     blog.category = data.categoryId ? this.em.getReference(BlogCategories, data.categoryId) : undefined;
     blog.title = data.title;
     blog.slug = data.slug;
     blog.excerpt = data.excerpt;
-    blog.contentMd = data.contentMd;
-    blog.coverImageUrl = data.coverImageUrl;
+    blog.contentMd = processedContent;
+    blog.coverImageUrl = coverImageUrl;
     blog.isPublished = data.isPublished ?? false;
     blog.isFeatured = data.isFeatured ?? false;
 
-    // Convert publishedAt from string to Date if provided
     if (data.publishedAt) {
       blog.publishedAt = typeof data.publishedAt === 'string'
         ? new Date(data.publishedAt)
@@ -164,7 +168,6 @@ export class BlogService {
     this.em.persist(blog);
     await this.em.flush();
 
-    // Save tags if provided
     if (data.tags && data.tags.length > 0) {
       for (const tag of data.tags) {
         const blogTag = new BlogTags();
@@ -173,19 +176,29 @@ export class BlogService {
         this.em.persist(blogTag);
       }
       await this.em.flush();
-      await blog.tags.init(); // Refresh collection
+      await blog.tags.init();
     }
 
     return this.mapToResponse(blog);
   }
   async update(id: number, data: UpdateBlogPostDto): Promise<BlogPostResponse> {
     const blog = await this.em.findOneOrFail(BlogPosts, { id });
+    const oldContent = blog.contentMd;
+
+    if (data.contentMd) {
+      await cleanupOldImages(String(oldContent ?? ""), data.contentMd);
+      const { html: processedContent } = await processQuillContent(data.contentMd);
+      data.contentMd = processedContent;
+    }
+
+    if (data.coverImageUrl !== undefined) {
+      blog.coverImageUrl = data.coverImageUrl ? await processImageUrl(data.coverImageUrl) : undefined;
+    }
 
     blog.title = data.title;
     blog.slug = data.slug;
     blog.excerpt = data.excerpt;
-    blog.contentMd = data.contentMd;
-    blog.coverImageUrl = data.coverImageUrl;
+    blog.contentMd = data.contentMd ?? blog.contentMd;
     blog.isPublished = data.isPublished ?? blog.isPublished;
     blog.isFeatured = data.isFeatured ?? blog.isFeatured;
 
@@ -205,14 +218,11 @@ export class BlogService {
     }
 
     if (data.tags !== undefined) {
-      // Remove existing tags explicitly
       const existingTags = await this.em.find(BlogTags, { post: blog });
       this.em.remove(existingTags);
 
-      // Reset collection
       blog.tags.removeAll();
 
-      // Add new tags
       for (const tag of data.tags) {
         const blogTag = new BlogTags();
         blogTag.post = blog;
@@ -234,6 +244,8 @@ export class BlogService {
     if (!blog) {
       return false;
     }
+
+    await cleanupOldImages(String(blog.contentMd ?? ""), "");
 
     this.em.remove(blog);
     await this.em.flush();

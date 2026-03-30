@@ -10,7 +10,6 @@ export interface CreateEventDto {
   endDatetime?: Date;
   isAllDay?: boolean;
   status: string;
-  coverImageUrl?: string;
   isFree: boolean;
   tags?: string[];
   createdAt?: Date;
@@ -29,7 +28,6 @@ export interface UpdateEventDto {
   endDatetime?: Date;
   isAllDay?: boolean;
   status: string;
-  coverImageUrl?: string;
   isFree: boolean;
   tags?: string[];
   updatedAt?: Date;
@@ -66,7 +64,6 @@ export interface EventResponse {
   endDatetime?: Date;
   isAllDay?: boolean;
   status: string;
-  coverImageUrl?: string;
   isFree?: boolean;
   createdAt?: Date;
   updatedAt?: Date;

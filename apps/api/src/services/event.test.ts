@@ -31,7 +31,6 @@ function createMockEvent(overrides: Partial<any> = {}) {
     endDatetime: '2026-03-22T10:00:00Z',
     isAllDay: false,
     status: 'upcoming',
-    coverImageUrl: '',
     isFree: true,
     category: { id: 1 },
     admin: { id: 1, name: 'Admin', username: 'admin' },

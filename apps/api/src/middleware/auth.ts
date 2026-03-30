@@ -1,15 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../lib/jwt.ts";
 
-export function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  let token: string | undefined;
-
+function getToken(req: Request): string | undefined {
   const header = req.headers.authorization;
   if (header?.startsWith('Bearer ')) {
-    token = header.split(' ')[1];
-  } else if (req.cookies?.accessToken) {
-    token = req.cookies.accessToken;
+    return header.split(' ')[1];
   }
+  return req.cookies?.accessToken;
+}
+
+export function authMiddleware(req: Request, res: Response, next: NextFunction) {
+  const token = getToken(req);
 
   if (!token) {
     return res.status(401).json({
@@ -29,4 +30,18 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
       message: "Token autentikasi tidak valid atau sudah kadaluarsa.",
     });
   }
+}
+
+export function optionalAuthMiddleware(req: Request, res: Response, next: NextFunction) {
+  const token = getToken(req);
+
+  if (token) {
+    try {
+      res.locals.admin = verifyAccessToken(token);
+    } catch {
+      // Invalid token, but continue anyway (optional auth)
+    }
+  }
+
+  next();
 }

@@ -122,56 +122,45 @@ export class PrayerTimesService {
         throw new Error(`Gagal mengambil jadwal sholat: ${result.message}`);
       }
 
+      // Normalisasi nama kota
+      const normalizedCity = city === 'Kab. Pati' && result.data.kabkota === 'Kab. Pati' ? city : result.data.kabkota;
+
+      // Hapus SEMUA data lama untuk kota ini (hanya bulan yang di-fetch)
+      await this.em.nativeDelete(PrayerTimes, {
+        city: normalizedCity,
+      });
+
       // Simpan semua jadwal ke database
       for (const daily of result.data.jadwal) {
-        // Cek apakah sudah ada di database
-        const existing = await this.em.findOne(PrayerTimes, {
+        // Cek apakah sudah ada di database (coba kota baru dulu, lalu kota lama)
+        let existing = await this.em.findOne(PrayerTimes, {
           date: daily.tanggal_lengkap,
-          city: city,
+          city: normalizedCity,
         });
 
-        const prayerData = this.mapEquranIdToEntity(daily, province, city);
+        // Jika tidak ketemu, coba cari dengan nama kota lama
+        // Langsung insert data baru (data lama sudah dihapus di atas)
+        const prayerData = this.mapEquranIdToEntity(daily, province, normalizedCity);
 
-        if (existing) {
-          // Update
-          existing.shortDate = prayerData.shortDate;
-          existing.longDate = prayerData.longDate;
-          existing.day = prayerData.day;
-          existing.province = prayerData.province;
-          existing.imsak = prayerData.imsak;
-          existing.fajr = prayerData.fajr;
-          existing.sunrise = prayerData.sunrise;
-          existing.dhuha = prayerData.dhuha;
-          existing.dhuhr = prayerData.dhuhr;
-          existing.asr = prayerData.asr;
-          existing.maghrib = prayerData.maghrib;
-          existing.isha = prayerData.isha;
-          existing.updatedAt = new Date();
+        const prayerTimes = new PrayerTimes();
+        prayerTimes.date = prayerData.date;
+        prayerTimes.shortDate = prayerData.shortDate;
+        prayerTimes.longDate = prayerData.longDate;
+        prayerTimes.day = prayerData.day;
+        prayerTimes.city = prayerData.city;
+        prayerTimes.province = prayerData.province;
+        prayerTimes.imsak = prayerData.imsak;
+        prayerTimes.fajr = prayerData.fajr;
+        prayerTimes.sunrise = prayerData.sunrise;
+        prayerTimes.dhuha = prayerData.dhuha;
+        prayerTimes.dhuhr = prayerData.dhuhr;
+        prayerTimes.asr = prayerData.asr;
+        prayerTimes.maghrib = prayerData.maghrib;
+        prayerTimes.isha = prayerData.isha;
 
-          await this.em.flush();
-          results.push(this.mapToResponse(existing));
-        } else {
-          // Create
-          const prayerTimes = new PrayerTimes();
-          prayerTimes.date = prayerData.date;
-          prayerTimes.shortDate = prayerData.shortDate;
-          prayerTimes.longDate = prayerData.longDate;
-          prayerTimes.day = prayerData.day;
-          prayerTimes.city = prayerData.city;
-          prayerTimes.province = prayerData.province;
-          prayerTimes.imsak = prayerData.imsak;
-          prayerTimes.fajr = prayerData.fajr;
-          prayerTimes.sunrise = prayerData.sunrise;
-          prayerTimes.dhuha = prayerData.dhuha;
-          prayerTimes.dhuhr = prayerData.dhuhr;
-          prayerTimes.asr = prayerData.asr;
-          prayerTimes.maghrib = prayerData.maghrib;
-          prayerTimes.isha = prayerData.isha;
-
-          this.em.persist(prayerTimes);
-          await this.em.flush();
-          results.push(this.mapToResponse(prayerTimes));
-        }
+        this.em.persist(prayerTimes);
+        await this.em.flush();
+        results.push(this.mapToResponse(prayerTimes));
       }
 
       return results;
@@ -262,5 +251,36 @@ export class PrayerTimesService {
     this.em.remove(prayer);
     await this.em.flush();
     return true;
+  }
+
+  async update(
+    id: number,
+    data: Partial<Omit<PrayerTimesResponse, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Promise<PrayerTimesResponse | null> {
+    const prayer = await this.em.findOne(PrayerTimes, { id });
+
+    if (!prayer) {
+      return null;
+    }
+
+    if (data.shortDate !== undefined) prayer.shortDate = data.shortDate;
+    if (data.longDate !== undefined) prayer.longDate = data.longDate;
+    if (data.day !== undefined) prayer.day = data.day;
+    if (data.date !== undefined) prayer.date = data.date;
+    if (data.city !== undefined) prayer.city = data.city;
+    if (data.province !== undefined) prayer.province = data.province;
+    if (data.fajr !== undefined) prayer.fajr = data.fajr;
+    if (data.sunrise !== undefined) prayer.sunrise = data.sunrise;
+    if (data.dhuhr !== undefined) prayer.dhuhr = data.dhuhr;
+    if (data.dhuha !== undefined) prayer.dhuha = data.dhuha;
+    if (data.asr !== undefined) prayer.asr = data.asr;
+    if (data.maghrib !== undefined) prayer.maghrib = data.maghrib;
+    if (data.isha !== undefined) prayer.isha = data.isha;
+    if (data.imsak !== undefined) prayer.imsak = data.imsak;
+
+    prayer.updatedAt = new Date();
+
+    await this.em.flush();
+    return this.mapToResponse(prayer);
   }
 }

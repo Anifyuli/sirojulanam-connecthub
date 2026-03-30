@@ -22,7 +22,6 @@ export class VideoService {
       sourceUrl: video.sourceUrl,
       platformVideoId: video.platformVideoId,
       localFileUrl: video.localFileUrl,
-      thumbnailUrl: video.thumbnailUrl,
       durationSeconds: video.durationSeconds,
       isPublished: video.isPublished,
       isFeatured: video.isFeatured,
@@ -99,7 +98,6 @@ export class VideoService {
     video.sourceUrl = data.sourceUrl;
     video.platformVideoId = data.platformVideoId;
     video.localFileUrl = data.localFileUrl;
-    video.thumbnailUrl = data.thumbnailUrl;
     video.durationSeconds = data.durationSeconds;
     video.isPublished = data.isPublished ?? false;
     video.isFeatured = data.isFeatured ?? false;
@@ -131,7 +129,6 @@ export class VideoService {
     video.sourceUrl = data.sourceUrl ?? video.sourceUrl;
     video.platformVideoId = data.platformVideoId ?? video.platformVideoId;
     video.localFileUrl = data.localFileUrl ?? video.localFileUrl;
-    video.thumbnailUrl = data.thumbnailUrl ?? video.thumbnailUrl;
     video.durationSeconds = data.durationSeconds ?? video.durationSeconds;
     video.isPublished = data.isPublished ?? video.isPublished;
     video.isFeatured = data.isFeatured ?? video.isFeatured;

@@ -8,8 +8,14 @@ import { VideoTags } from "../entities/VideoTags.ts";
 import { Events } from "../entities/Events.ts";
 import { BlogPosts } from "../entities/BlogPosts.ts";
 import { Videos } from "../entities/Videos.ts";
+import { Quotes } from "../entities/Quotes.ts";
+import { QuoteTags } from "../entities/Quotes.ts";
+import { InspirationalFigures } from "../entities/InspirationalFigures.ts";
+import { FigureTags } from "../entities/InspirationalFigures.ts";
+import { Posts } from "../entities/Posts.ts";
+import { PostTags } from "../entities/PostTags.ts";
 
-export type TaxonomyType = "event" | "blog" | "video";
+export type TaxonomyType = "event" | "blog" | "video" | "quote" | "figure" | "post";
 export type TaxonomyKind = "category" | "tag";
 
 interface CategoryResponse {
@@ -35,6 +41,9 @@ export class TaxonomyService {
       case "event": return EventCategories;
       case "blog": return BlogCategories;
       case "video": return VideoCategories;
+      case "quote": return null;
+      case "figure": return null;
+      case "post": return null;
     }
   }
 
@@ -43,6 +52,9 @@ export class TaxonomyService {
       case "event": return EventTags;
       case "blog": return BlogTags;
       case "video": return VideoTags;
+      case "quote": return QuoteTags;
+      case "figure": return FigureTags;
+      case "post": return PostTags;
     }
   }
 
@@ -51,11 +63,16 @@ export class TaxonomyService {
       case "event": return Events;
       case "blog": return BlogPosts;
       case "video": return Videos;
+      case "quote": return Quotes;
+      case "figure": return InspirationalFigures;
+      case "post": return Posts;
     }
   }
 
   async getCategories(type: TaxonomyType): Promise<CategoryResponse[]> {
     const entity = this.getCategoryEntity(type);
+    if (!entity) return [];
+    
     const categories = await this.em.find(entity, {});
     
     const contentEntity = this.getContentEntity(type);
@@ -81,6 +98,8 @@ export class TaxonomyService {
 
   async getCategoryById(type: TaxonomyType, id: number): Promise<CategoryResponse | null> {
     const entity = this.getCategoryEntity(type);
+    if (!entity) return null;
+    
     const cat = await this.em.findOne(entity, { id });
     
     if (!cat) return null;
@@ -102,6 +121,8 @@ export class TaxonomyService {
 
   async createCategory(type: TaxonomyType, data: { name: string; slug: string; colorHex?: string }): Promise<CategoryResponse> {
     const entity = this.getCategoryEntity(type);
+    if (!entity) throw new Error(`Categories not supported for type: ${type}`);
+    
     const category = new entity();
     category.name = data.name;
     category.slug = data.slug;
@@ -124,6 +145,8 @@ export class TaxonomyService {
 
   async updateCategory(type: TaxonomyType, id: number, data: { name?: string; slug?: string; colorHex?: string }): Promise<CategoryResponse | null> {
     const entity = this.getCategoryEntity(type);
+    if (!entity) return null;
+    
     const category = await this.em.findOne(entity, { id });
     
     if (!category) return null;
@@ -153,6 +176,8 @@ export class TaxonomyService {
 
   async deleteCategory(type: TaxonomyType, id: number): Promise<boolean> {
     const entity = this.getCategoryEntity(type);
+    if (!entity) return false;
+    
     const category = await this.em.findOne(entity, { id });
     
     if (!category) return false;
@@ -164,6 +189,8 @@ export class TaxonomyService {
 
   async getTags(type: TaxonomyType): Promise<TagResponse[]> {
     const entity = this.getTagEntity(type);
+    if (!entity) return [];
+    
     const tags = await this.em.find(entity, {});
     
     const tagCounts = new Map<string, number>();

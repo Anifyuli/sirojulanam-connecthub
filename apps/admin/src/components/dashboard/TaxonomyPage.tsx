@@ -38,6 +38,9 @@ import {
   CalendarDays,
   BookOpen,
   Video,
+  Quote,
+  User,
+  MessageSquare,
 } from "lucide-react";
 import api from "@/lib/api";
 import {
@@ -45,20 +48,26 @@ import {
   type Tag,
 } from "@/data/mock";
 
-type ContentType = "event" | "blog" | "video";
+type ContentType = "event" | "blog" | "video" | "quote" | "figure" | "post";
 type TaxonomyType = "category" | "tag";
 
 export function TaxonomyPage() {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<ContentType>("event");
+  const [activeTab, setActiveTab] = useState<ContentType>("blog");
   const [taxonomyType, setTaxonomyType] = useState<TaxonomyType>("category");
 
   const [eventCategories, setEventCategories] = useState<Category[]>([]);
   const [blogCategories, setBlogCategories] = useState<Category[]>([]);
   const [videoCategories, setVideoCategories] = useState<Category[]>([]);
+  const [quoteCategories, setQuoteCategories] = useState<Category[]>([]);
+  const [figureCategories, setFigureCategories] = useState<Category[]>([]);
+  const [postCategories, setPostCategories] = useState<Category[]>([]);
   const [eventTags, setEventTags] = useState<Tag[]>([]);
   const [blogTags, setBlogTags] = useState<Tag[]>([]);
   const [videoTags, setVideoTags] = useState<Tag[]>([]);
+  const [quoteTags, setQuoteTags] = useState<Tag[]>([]);
+  const [figureTags, setFigureTags] = useState<Tag[]>([]);
+  const [postTags, setPostTags] = useState<Tag[]>([]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
@@ -75,21 +84,38 @@ export function TaxonomyPage() {
   useEffect(() => {
     async function fetchTaxonomies() {
       try {
-        const [eventCats, blogCats, videoCats, eventTags, blogTags, videoTags] = await Promise.all([
-          api.get("/taxonomies/event/categories").then((r) => r.data),
-          api.get("/taxonomies/blog/categories").then((r) => r.data),
-          api.get("/taxonomies/video/categories").then((r) => r.data),
+        const [
+          eventCats, blogCats, videoCats,
+          quoteCats, figureCats, postCats,
+          eventTags, blogTags, videoTags,
+          quoteTags, figureTags, postTags
+        ] = await Promise.all([
+          api.get("/taxonomies/event/categories").then((r) => r.data).catch(() => []),
+          api.get("/taxonomies/blog/categories").then((r) => r.data).catch(() => []),
+          api.get("/taxonomies/video/categories").then((r) => r.data).catch(() => []),
+          api.get("/taxonomies/quote/categories").then((r) => r.data).catch(() => []),
+          api.get("/taxonomies/figure/categories").then((r) => r.data).catch(() => []),
+          api.get("/taxonomies/post/categories").then((r) => r.data).catch(() => []),
           api.get("/taxonomies/event/tags").then((r) => r.data),
           api.get("/taxonomies/blog/tags").then((r) => r.data),
           api.get("/taxonomies/video/tags").then((r) => r.data),
+          api.get("/taxonomies/quote/tags").then((r) => r.data),
+          api.get("/taxonomies/figure/tags").then((r) => r.data),
+          api.get("/taxonomies/post/tags").then((r) => r.data),
         ]);
 
         setEventCategories(eventCats);
         setBlogCategories(blogCats);
         setVideoCategories(videoCats);
+        setQuoteCategories(quoteCats);
+        setFigureCategories(figureCats);
+        setPostCategories(postCats);
         setEventTags(eventTags);
         setBlogTags(blogTags);
         setVideoTags(videoTags);
+        setQuoteTags(quoteTags);
+        setFigureTags(figureTags);
+        setPostTags(postTags);
       } catch (error) {
         console.error("Error fetching taxonomies:", error);
       } finally {
@@ -108,6 +134,12 @@ export function TaxonomyPage() {
         return blogCategories;
       case "video":
         return videoCategories;
+      case "quote":
+        return quoteCategories;
+      case "figure":
+        return figureCategories;
+      case "post":
+        return postCategories;
     }
   }
 
@@ -119,6 +151,12 @@ export function TaxonomyPage() {
         return blogTags;
       case "video":
         return videoTags;
+      case "quote":
+        return quoteTags;
+      case "figure":
+        return figureTags;
+      case "post":
+        return postTags;
     }
   }
 
@@ -133,6 +171,15 @@ export function TaxonomyPage() {
       case "video":
         setVideoCategories(categories);
         break;
+      case "quote":
+        setQuoteCategories(categories);
+        break;
+      case "figure":
+        setFigureCategories(categories);
+        break;
+      case "post":
+        setPostCategories(categories);
+        break;
     }
   }
 
@@ -146,6 +193,15 @@ export function TaxonomyPage() {
         break;
       case "video":
         setVideoTags(tags);
+        break;
+      case "quote":
+        setQuoteTags(tags);
+        break;
+      case "figure":
+        setFigureTags(tags);
+        break;
+      case "post":
+        setPostTags(tags);
         break;
     }
   }
@@ -218,7 +274,7 @@ export function TaxonomyPage() {
             slug: slug || generateSlug(name),
             color_hex: colorHex,
             item_count: 0,
-            type: activeTab,
+            type: activeTab as Category["type"],
           };
           setCurrentCategories([...categories, newCat]);
         }
@@ -240,7 +296,7 @@ export function TaxonomyPage() {
           const newTag: Tag = {
             tag: tagName,
             count: 0,
-            type: activeTab,
+            type: activeTab as Tag["type"],
           };
           setCurrentTags([...tags, newTag]);
         }
@@ -285,12 +341,18 @@ export function TaxonomyPage() {
     event: CalendarDays,
     blog: BookOpen,
     video: Video,
+    quote: Quote,
+    figure: User,
+    post: MessageSquare,
   };
 
   const contentTypeLabel = {
     event: "Event",
     blog: "Blog",
     video: "Video",
+    quote: "Quote",
+    figure: "Tokoh",
+    post: "Opini",
   };
 
   return (
@@ -300,14 +362,14 @@ export function TaxonomyPage() {
           Tag & Kategori
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Kelola kategori dan tag untuk event, blog, dan video
+          Kelola kategori dan tag untuk event, blog, video, quote, tokoh, dan opini
         </p>
       </div>
 
       {/* Content Type Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ContentType)} className="mb-6">
         <TabsList className="bg-muted/50 p-1">
-          {(["event", "blog", "video"] as ContentType[]).map((type) => {
+          {(["blog", "video", "post", "quote", "figure", "event"] as ContentType[]).map((type) => {
             const Icon = contentTypeIcon[type];
             return (
               <TabsTrigger
@@ -322,7 +384,7 @@ export function TaxonomyPage() {
           })}
         </TabsList>
 
-        {(["event", "blog", "video"] as ContentType[]).map((type) => (
+        {(["blog", "video", "post", "quote", "figure", "event"] as ContentType[]).map((type) => (
           <TabsContent key={type} value={type} className="mt-6">
             {/* Categories Section */}
             <div className="mb-10">

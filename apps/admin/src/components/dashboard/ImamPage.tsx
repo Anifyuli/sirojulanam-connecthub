@@ -15,7 +15,7 @@ type Pasaran = "pon" | "wage" | "kliwon" | "legi" | "pahing";
 
 interface DailyPrayerSchedule {
   id: number;
-  prayTime: PrayTime;
+  prayTime: number; // API returns 1-5
   imam: string;
 }
 
@@ -26,12 +26,20 @@ interface JumatSchedule {
   bilal: string;
 }
 
-const prayTimeLabels: Record<PrayTime, { label: string; icon: React.ReactNode }> = {
+const prayTimeLabels: Record<string, { label: string; icon: React.ReactNode }> = {
   fajr: { label: "Subuh (Fajr)", icon: <Sunrise className="w-4 h-4" /> },
   dhuhr: { label: "Dzuhur (Dhuhr)", icon: <Sun className="w-4 h-4" /> },
   asr: { label: "Ashar (Asr)", icon: <Sunset className="w-4 h-4" /> },
   maghrib: { label: "Maghrib", icon: <Sunset className="w-4 h-4" /> },
   isha: { label: "Isya (Isha)", icon: <Moon className="w-4 h-4" /> },
+};
+
+const prayTimeMap: Record<string, PrayTime> = {
+  fajr: "fajr",
+  dhuhr: "dhuhr",
+  asr: "asr",
+  maghrib: "maghrib",
+  isha: "isha",
 };
 
 const pasaranLabels: Record<Pasaran, string> = {
@@ -43,11 +51,11 @@ const pasaranLabels: Record<Pasaran, string> = {
 };
 
 const defaultDailySchedules: DailyPrayerSchedule[] = [
-  { id: 1, prayTime: "fajr", imam: "" },
-  { id: 2, prayTime: "dhuhr", imam: "" },
-  { id: 3, prayTime: "asr", imam: "" },
-  { id: 4, prayTime: "maghrib", imam: "" },
-  { id: 5, prayTime: "isha", imam: "" },
+  { id: 1, prayTime: 1, imam: "" },
+  { id: 2, prayTime: 2, imam: "" },
+  { id: 3, prayTime: 3, imam: "" },
+  { id: 4, prayTime: 4, imam: "" },
+  { id: 5, prayTime: 5, imam: "" },
 ];
 
 const defaultJumatSchedules: JumatSchedule[] = [

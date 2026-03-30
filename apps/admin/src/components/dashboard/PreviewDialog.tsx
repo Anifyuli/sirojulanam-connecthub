@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "./shared";
-import { CalendarDays, MapPin, User, Clock, Tag, ExternalLink, Play, Eye } from "lucide-react";
+import { CalendarDays, MapPin, User, Clock, Tag, ExternalLink, Play, Eye, Heart, Sparkles, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TikTokEmbed } from "react-social-media-embed";
 
@@ -17,7 +17,7 @@ type PreviewData = Record<string, any>;
 interface PreviewDialogProps {
   open: boolean;
   onClose: () => void;
-  type: "event" | "blog" | "video";
+  type: "event" | "blog" | "video" | "post" | "quote" | "figure";
   data: PreviewData | null;
 }
 
@@ -251,6 +251,184 @@ function VideoPreview({ data }: { data: PreviewData }) {
   );
 }
 
+function PostPreview({ data }: { data: PreviewData }) {
+  const typeLabels: Record<string, string> = {
+    opinion: "Opini",
+    quote_of_day: "Kutipan Hari Ini",
+    figure_spotlight: "Tokoh Unggulan",
+  };
+
+  const reactionIcons: Record<string, React.ReactNode> = {
+    like: <span>👍</span>,
+    love: <span>❤️</span>,
+    inspiring: <span>✨</span>,
+    pray: <span>🤲</span>,
+  };
+
+  const tags = Array.isArray(data.tags) ? data.tags : [];
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        <Badge>{typeLabels[data.type as string] || data.type}</Badge>
+        <Badge variant={data.isPublished ? "active" : "draft"}>
+          {data.isPublished ? "Dipublikasikan" : "Draf"}
+        </Badge>
+      </div>
+
+      {data.title && (
+        <h2 className="text-xl font-semibold text-balance">{data.title as string}</h2>
+      )}
+
+      <div className="prose prose-sm max-w-none text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: data.content as string }} />
+
+      {data.quote && (
+        <div className="bg-muted/50 rounded-lg p-4 border-l-4 border-primary">
+          <p className="text-sm italic text-muted-foreground mb-2">"{data.quote.content}"</p>
+          {data.quote.source && (
+            <p className="text-xs text-muted-foreground">— {data.quote.source}</p>
+          )}
+        </div>
+      )}
+
+      {data.figure && (
+        <div className="flex items-center gap-3 bg-muted/50 rounded-lg p-4">
+          {data.figure.imageUrl ? (
+            <img src={data.figure.imageUrl} alt={data.figure.name} className="w-12 h-12 rounded-full object-cover" />
+          ) : (
+            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
+              {data.figure.name?.charAt(0)}
+            </div>
+          )}
+          <div>
+            <p className="font-medium">{data.figure.name}</p>
+            {data.figure.title && <p className="text-xs text-muted-foreground">{data.figure.title}</p>}
+          </div>
+        </div>
+      )}
+
+      {data.reactions && data.reactions.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-border">
+          {data.reactions.map((r: { reactionType: string; count: number }, i: number) => (
+            <span key={i} className="text-xs bg-muted px-2 py-1 rounded flex items-center gap-1">
+              {reactionIcons[r.reactionType as string]}
+              {r.count}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {tags.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-border">
+          <Tag className="w-4 h-4 text-muted-foreground" />
+          {tags.map((tag: string, i: number) => (
+            <span key={i} className="text-xs bg-muted px-2 py-1 rounded-full">{tag}</span>
+          ))}
+        </div>
+      )}
+
+      <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2 border-t border-border">
+        <div className="flex items-center gap-2">
+          <Eye className="w-4 h-4" />
+          <span>{data.viewCount || 0} views</span>
+        </div>
+        {data.admin?.name && (
+          <div className="flex items-center gap-2">
+            <User className="w-4 h-4" />
+            <span>{data.admin.name}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function QuotePreview({ data }: { data: PreviewData }) {
+  const tags = Array.isArray(data.tags) ? data.tags : [];
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        {data.category?.name && <Badge>{data.category.name}</Badge>}
+        <Badge variant={data.isPublished ? "active" : "draft"}>
+          {data.isPublished ? "Dipublikasikan" : "Draf"}
+        </Badge>
+        {data.isFeatured && <Badge variant="upcoming">Unggulan</Badge>}
+      </div>
+
+      <blockquote className="text-xl font-serif text-foreground leading-relaxed border-l-4 border-primary pl-4">
+        <div dangerouslySetInnerHTML={{ __html: data.content }} />
+      </blockquote>
+
+      {data.source && (
+        <p className="text-muted-foreground font-medium">— {data.source}</p>
+      )}
+
+      {tags.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-border">
+          <Tag className="w-4 h-4 text-muted-foreground" />
+          {tags.map((tag: string, i: number) => (
+            <span key={i} className="text-xs bg-muted px-2 py-1 rounded-full">{tag}</span>
+          ))}
+        </div>
+      )}
+
+      {data.admin?.name && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2 border-t border-border">
+          <User className="w-4 h-4" />
+          <span>Ditambahkan oleh {data.admin.name}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FigurePreview({ data }: { data: PreviewData }) {
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        <Badge variant={data.isPublished ? "active" : "draft"}>
+          {data.isPublished ? "Dipublikasikan" : "Draf"}
+        </Badge>
+        {data.isFeatured && <Badge variant="upcoming">Unggulan</Badge>}
+      </div>
+
+      <div className="flex gap-4">
+        {data.imageUrl ? (
+          <img src={data.imageUrl} alt={data.name} className="w-24 h-24 rounded-lg object-cover" />
+        ) : (
+          <div className="w-24 h-24 rounded-lg bg-muted flex items-center justify-center">
+            <span className="text-3xl font-semibold text-muted-foreground">{data.name?.charAt(0)}</span>
+          </div>
+        )}
+        <div>
+          <h2 className="text-xl font-semibold">{data.name}</h2>
+          {data.title && <p className="text-muted-foreground">{data.title}</p>}
+          {(data.birthYear || data.deathYear) && (
+            <p className="text-sm text-muted-foreground mt-1">
+              {data.birthYear || "?"} - {data.deathYear || "Sekarang"}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {data.bio && (
+        <div className="pt-4 border-t border-border">
+          <h4 className="text-sm font-medium mb-2">Biografi</h4>
+          <div className="prose prose-sm max-w-none text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: data.bio as string }} />
+        </div>
+      )}
+
+      {data.admin?.name && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2 border-t border-border">
+          <User className="w-4 h-4" />
+          <span>Ditambahkan oleh {data.admin.name}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PreviewDialog({ open, onClose, type, data }: PreviewDialogProps) {
   if (!data) return null;
 
@@ -258,6 +436,9 @@ export function PreviewDialog({ open, onClose, type, data }: PreviewDialogProps)
     event: "Pratinjau Acara",
     blog: "Pratinjau Blog",
     video: "Pratinjau Video",
+    post: "Pratinjau Opini",
+    quote: "Pratinjau Kutipan",
+    figure: "Pratinjau Tokoh",
   };
 
   return (
@@ -273,6 +454,9 @@ export function PreviewDialog({ open, onClose, type, data }: PreviewDialogProps)
           {type === "event" && <EventPreview data={data!} />}
           {type === "blog" && <BlogPreview data={data!} />}
           {type === "video" && <VideoPreview data={data!} />}
+          {type === "post" && <PostPreview data={data!} />}
+          {type === "quote" && <QuotePreview data={data!} />}
+          {type === "figure" && <FigurePreview data={data!} />}
         </div>
       </DialogContent>
     </Dialog>

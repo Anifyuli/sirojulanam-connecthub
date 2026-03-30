@@ -6,7 +6,7 @@ export function Hero() {
     <section className="min-h-screen w-full bg-aqua-100 px-4 py-12 md:px-8">
       <div
         id="hero"
-        className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-8 md:flex-row md:items-center md:justify-between"
+        className="mx-auto flex w-full max-w-2xl lg:max-w-6xl flex-col-reverse gap-8 md:flex-row md:items-center md:justify-between"
       >
         {/* Left Content */}
         <div className="flex min-w-0 flex-col gap-6 md:w-[55%] md:pr-8 lg:pr-12">

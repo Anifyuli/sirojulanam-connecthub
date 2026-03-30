@@ -10,14 +10,47 @@ export class EventController {
     this.service = new EventService(em);
   }
 
-  getAll = async (req: Request, res: Response, next: NextFunction) => {
+  getAllPublic = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { title, categoryId, slug, page, limit } = req.query;
+      const filter: any = {};
+
+      if (title) filter.title = title as string;
+      if (categoryId) filter.categoryId = parseInt(categoryId as string, 10);
+      if (slug) filter.slug = slug as string;
+
+      const pagination = {
+        page: page ? parseInt(page as string, 10) : 1,
+        limit: limit ? parseInt(limit as string, 10) : 10,
+      };
+
+      const result = await this.service.find(filter, pagination);
+      res.json({
+        success: true,
+        ...result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getAllAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { title, categoryId, adminId, slug, page, limit } = req.query;
       const filter: any = {};
 
       if (title) filter.title = title as string;
       if (categoryId) filter.categoryId = parseInt(categoryId as string, 10);
-      if (adminId) filter.adminId = parseInt(adminId as string, 10);
+
+      const currentAdmin = res.locals.admin;
+      const isEditor = currentAdmin && currentAdmin.role !== "manager";
+
+      if (isEditor && currentAdmin) {
+        filter.adminId = currentAdmin.id;
+      } else if (adminId) {
+        filter.adminId = parseInt(adminId as string, 10);
+      }
+
       if (slug) filter.slug = slug as string;
 
       const pagination = {

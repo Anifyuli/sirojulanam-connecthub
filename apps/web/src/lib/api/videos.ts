@@ -9,7 +9,6 @@ export interface Video {
   sourceUrl?: string;
   platformVideoId?: string;
   localFileUrl?: string;
-  thumbnailUrl?: string;
   durationSeconds?: number;
   isPublished: boolean;
   isFeatured: boolean;

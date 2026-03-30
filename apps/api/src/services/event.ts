@@ -5,6 +5,7 @@ import { EventCategories } from "../entities/EventCategories.ts";
 import { Admins } from "../entities/Admins.ts";
 import { CreateEventDto, UpdateEventDto, EventFilter, EventResponse } from "../types/Event.ts";
 import { PaginationParams, PaginatedResponse } from "../types/pagination.ts";
+import { processQuillContent, cleanupOldImages } from "../lib/contentStorage.ts";
 
 export interface EventTagDto {
   tags: string[];
@@ -26,7 +27,7 @@ export class EventService {
       id: Number(event.id),
       categoryId: event.category?.id ? Number(event.category.id) : null,
       categoryName: event.category?.name ?? null,
-      adminId: event.admin.id,
+      adminId: Number(event.admin.id),
       title: event.title,
       slug: event.slug,
       descriptionMd: event.descriptionMd,
@@ -37,7 +38,6 @@ export class EventService {
       endDatetime: event.endDatetime,
       isAllDay: event.isAllDay,
       status: event.status,
-      coverImageUrl: event.coverImageUrl ?? undefined,
       isFree: event.isFree,
       createdAt: event.createdAt!,
       updatedAt: event.updatedAt!,
@@ -47,7 +47,7 @@ export class EventService {
       const admin = await this.em.findOne(Admins, { id: event.admin.id });
       if (admin) {
         response.admin = {
-          id: admin.id,
+          id: Number(admin.id),
           name: admin.name,
           username: admin.username,
         };
@@ -133,19 +133,20 @@ export class EventService {
   async create(data: CreateEventDto): Promise<EventResponse> {
     const admin = await this.em.findOneOrFail(Admins, { id: data.adminId }, { populate: ['role'] });
 
+    const { html: processedDescription } = await processQuillContent(String(data.descriptionMd ?? ""));
+
     const event = new Events();
     event.admin = admin;
     event.category = data.categoryId ? this.em.getReference(EventCategories, data.categoryId) : undefined;
     event.title = data.title;
     event.slug = data.slug;
-    event.descriptionMd = data.descriptionMd;
+    event.descriptionMd = processedDescription;
     event.locationName = data.locationName;
     event.locationDetail = data.locationDetail;
     event.startDatetime = parseDateTime(data.startDatetime);
     event.endDatetime = data.endDatetime ? parseDateTime(data.endDatetime) : undefined;
     event.isAllDay = data.isAllDay ?? false;
     event.status = data.status as EventsStatus;
-    event.coverImageUrl = data.coverImageUrl;
     event.isFree = data.isFree;
 
     this.em.persist(event);
@@ -167,16 +168,22 @@ export class EventService {
   async update(id: number, data: UpdateEventDto): Promise<EventResponse> {
     const event = await this.em.findOneOrFail(Events, { id });
 
+    if (data.descriptionMd) {
+      const newDescriptionMd = String(data.descriptionMd);
+      await cleanupOldImages(String(event.descriptionMd ?? ""), newDescriptionMd);
+      const { html: processedDescription } = await processQuillContent(newDescriptionMd);
+      data.descriptionMd = processedDescription;
+    }
+
     event.title = data.title;
     event.slug = data.slug;
-    event.descriptionMd = data.descriptionMd;
+    event.descriptionMd = data.descriptionMd ?? event.descriptionMd;
     event.locationName = data.locationName;
     event.locationDetail = data.locationDetail;
     event.startDatetime = parseDateTime(data.startDatetime);
     event.endDatetime = data.endDatetime ? parseDateTime(data.endDatetime) : undefined;
     event.isAllDay = data.isAllDay ?? event.isAllDay;
     event.status = data.status as EventsStatus;
-    event.coverImageUrl = data.coverImageUrl;
     event.isFree = data.isFree;
 
     if (data.categoryId !== undefined) {
@@ -208,6 +215,8 @@ export class EventService {
     if (!event) {
       return false;
     }
+
+    await cleanupOldImages(String(event.descriptionMd ?? ""), "");
 
     this.em.remove(event);
     await this.em.flush();

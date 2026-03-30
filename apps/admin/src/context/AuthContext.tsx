@@ -54,15 +54,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: u.email,
           username: u.username,
           name: u.name,
-          role: roleName,
+          role: roleName === "manager" ? "manager" : "editor",
         };
         setUser(userData);
-        // Persist to localStorage for "Remember Me"
-        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
         setIsLoading(false);
         return;
       }
-      // Fallback to localStorage if cookie session failed
+
       const stored = localStorage.getItem(USER_STORAGE_KEY);
       if (stored) {
         try {
@@ -74,7 +72,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setUser(null);
     } catch {
-      // Fallback to localStorage on network error
       const stored = localStorage.getItem(USER_STORAGE_KEY);
       if (stored) {
         try {

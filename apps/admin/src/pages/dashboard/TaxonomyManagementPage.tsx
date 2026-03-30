@@ -4,7 +4,7 @@ import { TaxonomyPage } from "@/components/dashboard/TaxonomyPage";
 export default function TaxonomyManagementPage() {
   return (
     <>
-      <Header title="Tags & Categories" description="Kelola kategori dan tag untuk event, blog, dan video." />
+      <Header title="Tags & Categories" description="Kelola kategori dan tag untuk event, blog, video, quote, tokoh, dan opini." />
       <main className="flex-1"><TaxonomyPage /></main>
     </>
   );

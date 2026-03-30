@@ -26,7 +26,6 @@ function createMockBlog(overrides: Partial<any> = {}) {
     slug: 'test-blog',
     excerpt: 'Test excerpt',
     contentMd: '<p>Test content</p>',
-    coverImageUrl: '',
     isPublished: true,
     isFeatured: false,
     publishedAt: new Date(),

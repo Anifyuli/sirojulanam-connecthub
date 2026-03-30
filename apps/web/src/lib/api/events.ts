@@ -11,7 +11,6 @@ export interface Event {
   endDatetime?: string;
   isAllDay: boolean;
   status: string;
-  coverImageUrl?: string;
   isFree: boolean;
   categoryId: number | null;
   categoryName?: string;

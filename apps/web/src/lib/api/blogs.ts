@@ -6,7 +6,7 @@ export interface BlogPost {
   slug: string;
   excerpt: string;
   contentMd: string;
-  coverImageUrl: string;
+  coverImageUrl?: string;
   isPublished?: boolean;
   isFeatured?: boolean;
   publishedAt: string;

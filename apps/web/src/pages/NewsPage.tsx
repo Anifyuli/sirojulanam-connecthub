@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Pagination, type PaginationData } from "../components/Pagination";
 import { blogsService, type BlogPost } from "../lib/api";
 import { Search } from "iconoir-react";
+import { Post } from "iconoir-react/regular";
 
 export interface NewsItem {
   id: number;
   title: string;
   excerpt: string;
-  thumbnail: string;
+  thumbnail?: string;
   slug: string;
   publishedAt?: string;
   tags?: string[];
@@ -21,7 +22,7 @@ function mapBlogToNewsItem(blog: BlogPost): NewsItem {
     id: blog.id,
     title: blog.title,
     excerpt: blog.excerpt || (blog.contentMd ? blog.contentMd.replace(/<[^>]*>/g, '').substring(0, 150) + "..." : ""),
-    thumbnail: blog.coverImageUrl || "https://placehold.co/300x200/0eb5f1/ffffff?text=Berita",
+    thumbnail: blog.coverImageUrl,
     slug: blog.slug,
     publishedAt: blog.publishedAt,
     tags: blog.tags,
@@ -164,14 +165,17 @@ function NewsList({ items, onNewsClick }: NewsListProps) {
           className="flex cursor-pointer gap-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
           onClick={() => onNewsClick(news)}
         >
-          <img
-            src={news.thumbnail}
-            alt={news.title}
-            className="h-24 w-32 flex-shrink-0 rounded object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "https://placehold.co/300x200/0eb5f1/ffffff?text=Berita";
-            }}
-          />
+          {news.thumbnail ? (
+            <img
+              src={news.thumbnail}
+              alt={news.title}
+              className="h-24 w-32 flex-shrink-0 rounded object-cover"
+            />
+          ) : (
+            <div className="flex h-24 w-32 flex-shrink-0 items-center justify-center rounded bg-cyan-50">
+              <Post className="h-10 w-10 text-cyan-500" />
+            </div>
+          )}
           <div className="flex flex-1 flex-col justify-between">
             <div>
               <h3 className="line-clamp-2 text-lg font-semibold text-gray-900">

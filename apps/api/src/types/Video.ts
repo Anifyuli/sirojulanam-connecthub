@@ -10,7 +10,6 @@ export interface CreateVideoDto {
   sourceUrl?: string;
   platformVideoId?: string;
   localFileUrl?: string;
-  thumbnailUrl?: string;
   durationSeconds?: number;
   isPublished?: boolean;
   isFeatured?: boolean;
@@ -27,7 +26,6 @@ export interface UpdateVideoDto {
   sourceUrl?: string;
   platformVideoId?: string;
   localFileUrl?: string;
-  thumbnailUrl?: string;
   durationSeconds?: number;
   isPublished?: boolean;
   isFeatured?: boolean;
@@ -55,7 +53,6 @@ export interface VideoResponse {
   sourceUrl?: string;
   platformVideoId?: string;
   localFileUrl?: string;
-  thumbnailUrl?: string;
   durationSeconds?: number;
   isPublished?: boolean;
   isFeatured?: boolean;

@@ -38,7 +38,6 @@ function createMockVideo(overrides: Partial<any> = {}) {
     sourceUrl: 'https://youtube.com/watch?v=abc',
     platformVideoId: 'abc',
     localFileUrl: null,
-    thumbnailUrl: 'https://img.youtube.com/vi/abc/0.jpg',
     durationSeconds: 300,
     isPublished: true,
     isFeatured: false,

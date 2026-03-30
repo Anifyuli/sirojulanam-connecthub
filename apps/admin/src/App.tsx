@@ -14,6 +14,9 @@ const SettingsPage = lazy(() => import("@/pages/dashboard/SettingsPage"));
 const TaxonomyManagementPage = lazy(() => import("@/pages/dashboard/TaxonomyManagementPage"));
 const UserManagementPage = lazy(() => import("@/pages/dashboard/UserManagementPage"));
 const VideoManagementPage = lazy(() => import("@/pages/dashboard/VideoManagementPage"));
+const PostManagementPage = lazy(() => import("@/pages/dashboard/PostManagementPage"));
+const QuoteManagementPage = lazy(() => import("@/pages/dashboard/QuoteManagementPage"));
+const FigureManagementPage = lazy(() => import("@/pages/dashboard/FigureManagementPage"));
 
 function LoadingFallback() {
   return (
@@ -54,6 +57,9 @@ export default function App() {
             <Route path="taxonomy" element={<TaxonomyManagementPage />} />
             <Route path="users" element={<UserManagementPage />} />
             <Route path="videos" element={<VideoManagementPage />} />
+            <Route path="posts" element={<PostManagementPage />} />
+            <Route path="quotes" element={<QuoteManagementPage />} />
+            <Route path="figures" element={<FigureManagementPage />} />
           </Route>
         </Route>
 

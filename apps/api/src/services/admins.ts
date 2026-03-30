@@ -18,11 +18,11 @@ export class AdminService {
 
   private async mapToResponse(admin: Admins): Promise<AdminResponse> {
     return {
-      id: admin.id,
+      id: Number(admin.id),
       username: admin.username,
       name: admin.name,
       email: admin.email,
-      roleId: admin.role.id,
+      roleId: Number(admin.role.id),
       roleName: admin.role.name,
       isActive: admin.isActive,
       createdAt: admin.createdAt!,

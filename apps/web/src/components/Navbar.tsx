@@ -1,9 +1,9 @@
 import { useState } from "react";
 import NavbarLogo from "@sirojulanam-connecthub/shared/assets/images/navbar-logo.png";
 import { Home, Menu, Xmark, Play, User } from "iconoir-react";
-import { Calendar, Journal } from "iconoir-react/regular";
+import { Calendar, Journal, Post, Star } from "iconoir-react/regular";
 import { Link, useLocation } from "react-router-dom";
-import { Whatsapp } from "iconoir-react/solid";
+import { Quote, Whatsapp } from "iconoir-react/solid";
 
 export function FloatingWhatsApp() {
   return (
@@ -28,11 +28,14 @@ export function Navbar() {
     { path: "/news", label: "Berita", icon: <Journal /> },
     { path: "/agenda", label: "Agenda", icon: <Calendar /> },
     { path: "/video", label: "Video", icon: <Play /> },
+    { path: "/opini", label: "Opini", icon: <Post /> },
+    { path: "/quotes", label: "Kutipan", icon: <Quote /> },
+    { path: "/figures", label: "Tokoh", icon: <Star /> },
   ];
 
   return (
     <nav className="sticky top-0 z-40 w-full bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2 shadow-lg">
-      <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <div className="flex items-center justify-between max-w-2xl lg:max-w-6xl mx-auto">
         {/* Logo Section */}
         <Link to="/" className="flex flex-row items-center gap-3">
           <img
@@ -40,30 +43,33 @@ export function Navbar() {
             className="w-10 h-auto rounded-xl shadow-sm"
             alt="SirojulAnam ConnectHub Logo"
           />
-          <span className="hidden font-bold text-white md:block tracking-wide">
+          <span className="hidden font-bold text-white lg:block tracking-wide">
             SirojulAnam ConnectHub
           </span>
         </Link>
 
         {/* Desktop Navigation Links - Center */}
-        <div className="hidden md:flex flex-row items-center gap-2 absolute left-1/2 transform -translate-x-1/2">
-          {navLinks.map(({ path, label, icon }) => (
-            <Link
-              key={path}
-              to={path}
-              className={`flex flex-row items-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 ${location.pathname === path
-                ? "bg-white/20 text-white font-medium shadow-sm"
-                : "text-emerald-100 hover:bg-white/10 hover:text-white"
-                }`}
-            >
-              <span>{icon}</span>
-              <span>{label}</span>
-            </Link>
-          ))}
+        <div className="hidden lg:flex flex-1 flex-row items-center justify-center gap-1 px-4">
+          {navLinks.map(({ path, label, icon }) => {
+            const isActive = location.pathname === path;
+            return (
+              <Link
+                key={path}
+                to={path}
+                className={`flex flex-col items-center justify-center rounded-lg px-3 py-2 transition-all duration-200 ${isActive
+                  ? "bg-white/20 text-white font-medium shadow-sm"
+                  : "text-emerald-100 hover:bg-white/10 hover:text-white"
+                  }`}
+              >
+                <span className="w-6 h-6 transition-all">{icon}</span>
+                {isActive && <span className="text-xs mt-0.5">{label}</span>}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Admin Button - Right */}
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <a
             href="/dashboard"
             target="_blank"
@@ -79,7 +85,7 @@ export function Navbar() {
 
         {/* Mobile Menu Button */}
         <button
-          className="flex rounded-lg p-2 text-white hover:bg-white/10 md:hidden"
+          className="flex rounded-lg p-2 text-white hover:bg-white/10 lg:hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -89,7 +95,7 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="mt-4 flex flex-col gap-2 border-t border-white/20 pt-4 md:hidden relative">
+        <div className="mt-4 flex flex-col gap-2 border-t border-white/20 pt-4 lg:hidden max-w-2xl lg:max-w-6xl mx-auto">
           {navLinks.map(({ path, label, icon }) => (
             <Link
               key={path}
@@ -104,18 +110,16 @@ export function Navbar() {
               <span>{label}</span>
             </Link>
           ))}
-          <div className="absolute left-1/2 transform -translate-x-1/2 -top-3">
-            <a
-              href="/dashboard"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-white text-emerald-700 hover:bg-gray-100 transition-all duration-200 shadow-md"
-              onClick={() => setIsMobileMenuOpen(false)}
-              aria-label="Halaman Admin"
-            >
-              <User className="w-5 h-5" />
-            </a>
-          </div>
+          <a
+            href="/dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-row items-center gap-3 rounded-lg px-3 py-3 text-emerald-100 hover:bg-white/10 hover:text-white transition-all duration-200"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <User className="w-5 h-5" />
+            <span>Halaman Admin</span>
+          </a>
         </div>
       )}
     </nav>
