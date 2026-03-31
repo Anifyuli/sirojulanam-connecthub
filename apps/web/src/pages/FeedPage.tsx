@@ -50,11 +50,11 @@ export function FeedPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-8 lg:max-w-3xl xl:max-w-4xl">
+    <div className="mx-auto w-full max-w-4xl px-3 py-8 md:px-6">
       {/* Header */}
-      <div className="mb-5">
-        <h1 className="text-2xl font-bold text-gray-900">Opini & Inspirasi</h1>
-        <p className="text-gray-500 mt-1 text-sm">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold text-gray-900">Opini & Inspirasi</h1>
+        <p className="mt-1.5 text-gray-500">
           Kumpulan opini, kutipan inspiratif, dan sosok-sosok motivasi
         </p>
       </div>
