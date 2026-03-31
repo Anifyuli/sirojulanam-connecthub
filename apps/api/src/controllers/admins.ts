@@ -18,6 +18,8 @@ export class AdminController {
       const refreshToken = req.cookies?.refreshToken;
 
       if (!refreshToken) {
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
         res.status(400).json({
           success: false,
           code: "NO_REFRESH_TOKEN",
@@ -40,6 +42,8 @@ export class AdminController {
         data: result,
       });
     } catch (error) {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
       if (error instanceof Error) {
         res.status(401).json({
           success: false,
@@ -54,12 +58,16 @@ export class AdminController {
 
   logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { refreshToken } = req.body;
+      const refreshToken = req.cookies?.refreshToken;
       const _adminId = res.locals.admin.id;
 
       if (refreshToken) {
         await this.authService.revoke(refreshToken);
       }
+
+      // Clear cookies
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
 
       res.json({
         success: true,
@@ -108,22 +116,32 @@ export class AdminController {
 
       const result = await this.service.login(email || '', username || '', password, rememberMe === true);
 
-      // Set cookies with different expiry based on rememberMe
-      const cookieMaxAge = rememberMe === true ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000; // 30 days or 7 days
+      const isPersistent = rememberMe === true;
       
-      res.cookie('accessToken', result.accessToken, {
+      // Access token cookie
+      const accessCookieOptions: any = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 15 * 60 * 1000, // 15 minutes
-      });
-
-      res.cookie('refreshToken', result.refreshToken, {
+      };
+      if (isPersistent) {
+        accessCookieOptions.maxAge = 15 * 60 * 1000; // 15 min if rememberMe
+      }
+      // Without rememberMe: session cookie (deleted when browser closes)
+      
+      // Refresh token cookie
+      const refreshCookieOptions: any = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: cookieMaxAge,
-      });
+      };
+      if (isPersistent) {
+        refreshCookieOptions.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days if rememberMe
+      }
+      // Without rememberMe: session cookie
+      
+      res.cookie('accessToken', result.accessToken, accessCookieOptions);
+      res.cookie('refreshToken', result.refreshToken, refreshCookieOptions);
 
       res.json({
         success: true,

@@ -57,30 +57,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           role: roleName === "manager" ? "manager" : "editor",
         };
         setUser(userData);
+        // Also update localStorage if rememberMe was used
+        const stored = localStorage.getItem(USER_STORAGE_KEY);
+        if (stored) {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+        }
         setIsLoading(false);
         return;
       }
 
-      const stored = localStorage.getItem(USER_STORAGE_KEY);
-      if (stored) {
-        try {
-          const userData = JSON.parse(stored);
-          setUser(userData);
-        } catch {
-          localStorage.removeItem(USER_STORAGE_KEY);
-        }
-      }
+      // API returned success but no user - clear session
+      localStorage.removeItem(USER_STORAGE_KEY);
       setUser(null);
-    } catch {
-      const stored = localStorage.getItem(USER_STORAGE_KEY);
-      if (stored) {
-        try {
-          const userData = JSON.parse(stored);
-          setUser(userData);
-        } catch {
-          localStorage.removeItem(USER_STORAGE_KEY);
-        }
-      }
+    } catch (error: any) {
+      // If API call failed (401, network error, etc.), clear localStorage
+      // Session is not valid
+      localStorage.removeItem(USER_STORAGE_KEY);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
