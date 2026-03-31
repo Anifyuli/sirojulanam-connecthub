@@ -316,6 +316,9 @@ export function TaxonomyPage() {
         setCurrentCategories(
           getCurrentCategories().filter((c) => c.id !== deleteCategory.id)
         );
+        // Refresh to ensure consistency
+        const res = await api.get(`/taxonomies/${activeTab}/categories`);
+        setCurrentCategories(res.data);
       } catch (error) {
         console.error("Error deleting category:", error);
         alert("Gagal menghapus kategori");
@@ -329,6 +332,9 @@ export function TaxonomyPage() {
       try {
         await api.delete(`/taxonomies/${activeTab}/tags/${encodeURIComponent(deleteTag.tag)}`);
         setCurrentTags(getCurrentTags().filter((t) => t.tag !== deleteTag.tag));
+        // Refresh to ensure consistency
+        const res = await api.get(`/taxonomies/${activeTab}/tags`);
+        setCurrentTags(res.data);
       } catch (error) {
         console.error("Error deleting tag:", error);
         alert("Gagal menghapus tag");

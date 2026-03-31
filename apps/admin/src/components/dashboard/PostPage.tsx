@@ -161,6 +161,7 @@ export function PostPage() {
         setPosts((prev) => [res.data, ...prev]);
       }
       setModalOpen(false);
+      fetchPosts();
     } catch (error) {
       console.error("Failed to save post:", error);
     }
@@ -173,6 +174,7 @@ export function PostPage() {
       await api.delete(`/admin/posts/${post.id}`);
       setPosts((prev) => prev.filter((p) => p.id !== post.id));
       setDeleteConfirm({ open: false, post: null });
+      fetchPosts();
     } catch (error) {
       console.error("Failed to delete post:", error);
     }

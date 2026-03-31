@@ -110,12 +110,20 @@ export function EventsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; event: Event | null }>({ open: false, event: null });
   const [categories, setCategories] = useState<Category[]>([]);
   const [tagSuggestions, setTagSuggestions] = useState<{ tag: string }[]>([]);
+  const [categoryRefreshKey, setCategoryRefreshKey] = useState(0);
 
   useEffect(() => {
     fetchEvents();
     fetchCategories();
     fetchTagSuggestions();
   }, []);
+
+  useEffect(() => {
+    if (modalOpen) {
+      fetchCategories();
+      setCategoryRefreshKey(k => k + 1);
+    }
+  }, [modalOpen]);
 
   const fetchEvents = async (page: number = 1) => {
     try {
@@ -260,6 +268,9 @@ export function EventsPage() {
         }
       }
       setModalOpen(false);
+      fetchEvents();
+      fetchCategories();
+      fetchTagSuggestions();
     } catch (error: unknown) {
       console.error("Failed to save event:", error);
       const err = error as { response?: { data?: { error?: string } } };
@@ -278,6 +289,9 @@ export function EventsPage() {
       await api.delete(`/admin/events/${id}`);
       setEvents((prev) => prev.filter((e) => e.id !== id));
       toast({ title: "Berhasil", description: "Event berhasil dihapus" });
+      fetchEvents();
+      fetchCategories();
+      fetchTagSuggestions();
     } catch (error: unknown) {
       console.error("Failed to delete event:", error);
       const err = error as { response?: { data?: { error?: string } } };
@@ -435,6 +449,7 @@ export function EventsPage() {
             <div className="space-y-1.5">
               <Label htmlFor="ev-category">Kategori</Label>
               <select
+                key={categoryRefreshKey}
                 id="ev-category"
                 className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 value={form.categoryId}

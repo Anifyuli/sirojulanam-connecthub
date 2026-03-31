@@ -180,6 +180,8 @@ export function QuotePage() {
         setQuotes((prev) => [res.data, ...prev]);
       }
       setModalOpen(false);
+      fetchQuotes();
+      fetchTagSuggestions();
     } catch (error) {
       console.error("Failed to save quote:", error);
     }
@@ -192,6 +194,8 @@ export function QuotePage() {
       await api.delete(`/admin/quotes/${quote.id}`);
       setQuotes((prev) => prev.filter((q) => q.id !== quote.id));
       setDeleteConfirm({ open: false, quote: null });
+      fetchQuotes();
+      fetchTagSuggestions();
     } catch (error) {
       console.error("Failed to delete quote:", error);
     }

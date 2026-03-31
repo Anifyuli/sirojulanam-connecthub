@@ -187,6 +187,8 @@ export function FigurePage() {
         setFigures((prev) => [res.data, ...prev]);
       }
       setModalOpen(false);
+      fetchFigures();
+      fetchTagSuggestions();
     } catch (error) {
       console.error("Failed to save figure:", error);
     }
@@ -199,6 +201,8 @@ export function FigurePage() {
       await api.delete(`/admin/figures/${figure.id}`);
       setFigures((prev) => prev.filter((f) => f.id !== figure.id));
       setDeleteConfirm({ open: false, figure: null });
+      fetchFigures();
+      fetchTagSuggestions();
     } catch (error) {
       console.error("Failed to delete figure:", error);
     }

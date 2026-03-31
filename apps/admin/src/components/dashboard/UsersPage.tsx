@@ -178,6 +178,7 @@ export function UsersPage() {
       await api.delete(`/admins/${deleteItem.id}`);
       setAdmins((prev) => prev.filter((a) => a.id !== deleteItem.id));
       setDeleteItem(null);
+      fetchAdmins();
     } catch (error) {
       console.error("Failed to delete admin:", error);
     }

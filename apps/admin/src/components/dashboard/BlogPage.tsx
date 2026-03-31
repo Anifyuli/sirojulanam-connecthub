@@ -241,6 +241,8 @@ export function BlogPage() {
         setPosts((prev) => [...prev, res.data]);
       }
       setModalOpen(false);
+      fetchPosts();
+      fetchCategories();
     } catch (error) {
       console.error("Failed to save blog:", error);
     }
@@ -306,6 +308,8 @@ export function BlogPage() {
       await api.delete(`/admin/blogs/${post.id}`);
       setPosts((prev) => prev.filter((p) => p.id !== post.id));
       setDeleteConfirm({ open: false, post: null });
+      fetchPosts();
+      fetchCategories();
     } catch (error) {
       console.error("Failed to delete blog:", error);
     }

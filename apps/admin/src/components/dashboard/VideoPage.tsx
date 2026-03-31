@@ -239,6 +239,8 @@ export function VideoPage() {
         }
       }
       setModalOpen(false);
+      fetchVideos();
+      fetchCategories();
     } catch (error) {
       console.error("Failed to save video:", error);
     }
@@ -251,6 +253,8 @@ export function VideoPage() {
       await api.delete(`/admin/videos/${video.id}`);
       setVideos((prev) => prev.filter((v) => v.id !== video.id));
       setDeleteConfirm({ open: false, video: null });
+      fetchVideos();
+      fetchCategories();
     } catch (error) {
       console.error("Failed to delete video:", error);
     }
