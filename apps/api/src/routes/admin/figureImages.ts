@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
-import { FigureImageController } from "../../controllers/figureImage.ts";
-import { authMiddleware } from "../../middleware/auth.ts";
+import { FigureImageController } from "../../controllers/figureImage.js";
+import { authMiddleware } from "../../middleware/auth.js";
 
 const router = express.Router();
 const controller = new FigureImageController();

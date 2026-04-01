@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { EntityManager } from "@mikro-orm/core";
-import { JumatScheduleService } from "../services/jumatSchedules.ts";
-import { CreateJumatSchedulesDto, UpdateJumatScheduleDto } from "../types/JumatSchedules.ts";
-import { JumatSchedulesPasaran } from "../entities/JumatSchedules.ts";
+import { JumatScheduleService } from "../services/jumatSchedules.js";
+import { CreateJumatSchedulesDto, UpdateJumatScheduleDto } from "../types/JumatSchedules.js";
+import { JumatSchedulesPasaran } from "../entities/JumatSchedules.js";
 
 export class JumatScheduleController {
   private readonly service: JumatScheduleService;

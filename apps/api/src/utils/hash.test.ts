@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { hashPassword, verifyPassword } from '../utils/hash.ts';
+import { hashPassword, verifyPassword } from '../utils/hash';
 
 describe('Hash Utils', () => {
   describe('hashPassword', () => {

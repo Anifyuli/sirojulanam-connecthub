@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, PrimaryKey, Property, type Rel, Index } from '@mikro-orm/core';
-import { Posts } from './Posts.ts';
+import { Posts } from './Posts';
 
 @Entity()
 @Index({ name: 'idx_post_tags_tag', properties: ['tag'] })

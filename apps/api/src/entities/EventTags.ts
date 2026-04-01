@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, PrimaryKey, PrimaryKeyProp, type Rel } from '@mikro-orm/core';
-import { Events } from './Events.ts';
+import { Events } from './Events';
 
 @Entity()
 export class EventTags {

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { EntityManager } from "@mikro-orm/core";
-import { PostService } from "../services/posts.ts";
-import { CreatePostDto, UpdatePostDto, AddReactionDto } from "../types/Post.ts";
-import { PostType } from "../entities/Posts.ts";
+import { PostService } from "../services/posts.js";
+import { CreatePostDto, UpdatePostDto, AddReactionDto } from "../types/Post.js";
+import { PostType } from "../entities/Posts.js";
 
 export class PostController {
   private readonly service: PostService;
@@ -110,17 +110,6 @@ export class PostController {
         return res.status(404).json({ error: "Post not found" });
       }
 
-      res.status(204).send();
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  addReaction = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const id = BigInt(req.params.id as string);
-      const data: AddReactionDto = req.body;
-      await this.service.addReaction(id, data);
       res.status(204).send();
     } catch (error) {
       next(error);

@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Roles } from './Roles.ts';
+import { Roles } from './Roles';
 
 @Entity()
 export class Admins {

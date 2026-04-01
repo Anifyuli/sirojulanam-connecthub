@@ -1,13 +1,13 @@
 import { EntityManager } from "@mikro-orm/core";
-import { Posts, PostType } from "../entities/Posts.ts";
-import { PostReactions, ReactionType } from "../entities/PostReactions.ts";
-import { PostTags } from "../entities/PostTags.ts";
-import { Quotes } from "../entities/Quotes.ts";
-import { InspirationalFigures } from "../entities/InspirationalFigures.ts";
-import { Admins } from "../entities/Admins.ts";
-import { CreatePostDto, UpdatePostDto, PostFilter, PostResponse, AddReactionDto } from "../types/Post.ts";
-import { PaginationParams, PaginatedResponse } from "../types/pagination.ts";
-import { processQuillContent, cleanupOldImages } from "../lib/contentStorage.ts";
+import { Posts, PostType } from "../entities/Posts.js";
+import { PostReactions, ReactionType } from "../entities/PostReactions.js";
+import { PostTags } from "../entities/PostTags.js";
+import { Quotes } from "../entities/Quotes.js";
+import { InspirationalFigures } from "../entities/InspirationalFigures.js";
+import { Admins } from "../entities/Admins.js";
+import { CreatePostDto, UpdatePostDto, PostFilter, PostResponse, AddReactionDto } from "../types/Post.js";
+import { PaginationParams, PaginatedResponse } from "../types/pagination.js";
+import { processQuillContent, cleanupOldImages } from "../lib/contentStorage.js";
 
 export class PostService {
   constructor(private readonly em: EntityManager) { }

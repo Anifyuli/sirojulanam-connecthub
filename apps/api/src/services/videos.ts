@@ -1,10 +1,10 @@
 import { EntityManager } from "@mikro-orm/core";
-import { Videos, VideosSourceType } from "../entities/Videos.ts";
-import { VideoTags } from "../entities/VideoTags.ts";
-import { VideoCategories } from "../entities/VideoCategories.ts";
-import { Admins } from "../entities/Admins.ts";
-import { CreateVideoDto, UpdateVideoDto, VideoFilter, VideoResponse } from "../types/Video.ts";
-import { PaginationParams, PaginatedResponse } from "../types/pagination.ts";
+import { Videos, VideosSourceType } from "../entities/Videos.js";
+import { VideoTags } from "../entities/VideoTags.js";
+import { VideoCategories } from "../entities/VideoCategories.js";
+import { Admins } from "../entities/Admins.js";
+import { CreateVideoDto, UpdateVideoDto, VideoFilter, VideoResponse } from "../types/Video.js";
+import { PaginationParams, PaginatedResponse } from "../types/pagination.js";
 
 export interface VideoTagDto {
   tags: string[];

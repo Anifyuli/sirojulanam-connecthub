@@ -1,5 +1,5 @@
 import { MikroORM } from '@mikro-orm/mariadb';
-import config from '../../mikro-orm.config.ts';
+import config from '../../mikro-orm.config';
 
 let orm: MikroORM | null = null;
 

@@ -1,8 +1,8 @@
 import express from "express";
 import { RequestContext } from "@mikro-orm/core";
-import { AdminController } from '../controllers/admins.ts';
-import { authMiddleware } from "../middleware/auth.ts";
-import { requireManager } from "../middleware/authorize.ts";
+import { AdminController } from '../controllers/admins';
+import { authMiddleware } from "../middleware/auth.js";
+import { requireManager } from "../middleware/authorize.js";
 
 const router = express.Router();
 

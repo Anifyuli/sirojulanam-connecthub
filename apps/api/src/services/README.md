@@ -158,8 +158,8 @@ subRoute.use("/videos", setupVideoRoutes(videoController));
 
 ## Keuntungan Pattern Ini
 
-✅ **Separation of Concerns** - Setiap layer punya tanggung jawab jelas  
-✅ **Testable** - Service bisa di-test tanpa HTTP server  
-✅ **Maintainable** - Mudah menemukan dan modify kode  
-✅ **Reusable** - Service bisa dipanggil dari multiple controllers  
-✅ **Scalable** - Mudah menambah fitur baru tanpa mengacaukan kode existing
+- **Separation of Concerns** - Setiap layer punya tanggung jawab jelas
+- **Testable** - Service bisa di-test tanpa HTTP server
+- **Maintainable** - Mudah menemukan dan modify kode
+- **Reusable** - Service bisa dipanggil dari multiple controllers
+- **Scalable** - Mudah menambah fitur baru tanpa mengacaukan kode existing

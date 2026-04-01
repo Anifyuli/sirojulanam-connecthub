@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, PrimaryKeyProp, Property, type Rel } from '@mikro-orm/core';
-import { BlogPosts } from './BlogPosts.ts';
+import { BlogPosts } from './BlogPosts';
 
 @Entity()
 export class BlogTags {

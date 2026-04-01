@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { TaxonomyService } from './taxonomy.ts';
+import { TaxonomyService } from './taxonomy';
 
-jest.mock('../entities/EventCategories.ts', () => ({ EventCategories: class {} }));
-jest.mock('../entities/EventTags.ts', () => ({ EventTags: class {} }));
-jest.mock('../entities/BlogCategories.ts', () => ({ BlogCategories: class {} }));
-jest.mock('../entities/BlogTags.ts', () => ({ BlogTags: class {} }));
-jest.mock('../entities/VideoCategories.ts', () => ({ VideoCategories: class {} }));
-jest.mock('../entities/VideoTags.ts', () => ({ VideoTags: class {} }));
-jest.mock('../entities/Events.ts', () => ({ Events: class {} }));
-jest.mock('../entities/BlogPosts.ts', () => ({ BlogPosts: class {} }));
-jest.mock('../entities/Videos.ts', () => ({ Videos: class {} }));
+jest.mock('../entities/EventCategories', () => ({ EventCategories: class {} }));
+jest.mock('../entities/EventTags', () => ({ EventTags: class {} }));
+jest.mock('../entities/BlogCategories', () => ({ BlogCategories: class {} }));
+jest.mock('../entities/BlogTags', () => ({ BlogTags: class {} }));
+jest.mock('../entities/VideoCategories', () => ({ VideoCategories: class {} }));
+jest.mock('../entities/VideoTags', () => ({ VideoTags: class {} }));
+jest.mock('../entities/Events', () => ({ Events: class {} }));
+jest.mock('../entities/BlogPosts', () => ({ BlogPosts: class {} }));
+jest.mock('../entities/Videos', () => ({ Videos: class {} }));
 
 function createMockEntityManager() {
   return {

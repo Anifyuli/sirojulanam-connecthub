@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { EntityManager } from "@mikro-orm/core";
-import { QuoteService } from "../services/quotes.ts";
-import { CreateQuoteDto, UpdateQuoteDto } from "../types/Quote.ts";
+import { QuoteService } from "../services/quotes.js";
+import { CreateQuoteDto, UpdateQuoteDto } from "../types/Quote.js";
 
 export class QuoteController {
   private readonly service: QuoteService;

@@ -1,8 +1,8 @@
 import express from "express";
 import { RequestContext } from "@mikro-orm/core";
-import { VideoController } from "../../controllers/videos.ts";
-import { authMiddleware } from "../../middleware/auth.ts";
-import { authorizeOwnership } from "../../middleware/authorize.ts";
+import { VideoController } from "../../controllers/videos.js";
+import { authMiddleware } from "../../middleware/auth.js";
+import { authorizeOwnership } from "../../middleware/authorize.js";
 
 const router = express.Router();
 const controller = (_req: express.Request) => new VideoController(RequestContext.getEntityManager()!);

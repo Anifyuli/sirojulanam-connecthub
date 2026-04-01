@@ -1,9 +1,9 @@
 import { EntityManager } from "@mikro-orm/core";
-import { Quotes, QuoteTags } from "../entities/Quotes.ts";
-import { QuoteCategories } from "../entities/QuoteCategories.ts";
-import { Admins } from "../entities/Admins.ts";
-import { CreateQuoteDto, UpdateQuoteDto, QuoteFilter, QuoteResponse, CreateQuoteCategoryDto, QuoteCategoryResponse } from "../types/Quote.ts";
-import { PaginationParams, PaginatedResponse } from "../types/pagination.ts";
+import { Quotes, QuoteTags } from "../entities/Quotes.js";
+import { QuoteCategories } from "../entities/QuoteCategories.js";
+import { Admins } from "../entities/Admins.js";
+import { CreateQuoteDto, UpdateQuoteDto, QuoteFilter, QuoteResponse, CreateQuoteCategoryDto, QuoteCategoryResponse } from "../types/Quote.js";
+import { PaginationParams, PaginatedResponse } from "../types/pagination.js";
 
 export class QuoteService {
   constructor(private readonly em: EntityManager) { }

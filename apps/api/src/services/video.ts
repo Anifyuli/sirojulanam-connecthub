@@ -1,9 +1,9 @@
 import { EntityManager } from "@mikro-orm/mariadb";
-import { Videos } from "../entities/Videos.ts";
-import { VideoTags } from "../entities/VideoTags.ts";
-import { VideoCategories } from "../entities/VideoCategories.ts";
-import { CreateVideoDto, UpdateVideoDto, VideoFilter, VideoResponse } from "../types/Video.ts";
-import { Admins } from "../entities/Admins.ts";
+import { Videos } from "../entities/Videos.js";
+import { VideoTags } from "../entities/VideoTags.js";
+import { VideoCategories } from "../entities/VideoCategories.js";
+import { CreateVideoDto, UpdateVideoDto, VideoFilter, VideoResponse } from "../types/Video.js";
+import { Admins } from "../entities/Admins.js";
 
 export class VideoService {
   constructor(private readonly em: EntityManager) { }

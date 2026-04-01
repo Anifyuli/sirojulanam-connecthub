@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { BlogService } from './blogs.ts';
+import { BlogService } from './blogs';
 
-jest.mock('../entities/BlogPosts.ts', () => ({ BlogPosts: class {} }));
-jest.mock('../entities/BlogTags.ts', () => ({ BlogTags: class {} }));
-jest.mock('../entities/BlogCategories.ts', () => ({ BlogCategories: class {} }));
-jest.mock('../entities/Admins.ts', () => ({ Admins: class {} }));
+jest.mock('../entities/BlogPosts', () => ({ BlogPosts: class {} }));
+jest.mock('../entities/BlogTags', () => ({ BlogTags: class {} }));
+jest.mock('../entities/BlogCategories', () => ({ BlogCategories: class {} }));
+jest.mock('../entities/Admins', () => ({ Admins: class {} }));
 
 function createMockEntityManager() {
   return {

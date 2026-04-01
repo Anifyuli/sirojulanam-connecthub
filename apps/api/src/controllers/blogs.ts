@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { EntityManager } from "@mikro-orm/core";
-import { BlogService } from "../services/blogs.ts";
-import { CreateBlogPostDto, UpdateBlogPostDto } from "../types/Blog.ts";
+import { BlogService } from "../services/blogs.js";
+import { CreateBlogPostDto, UpdateBlogPostDto } from "../types/Blog.js";
 
 export class BlogController {
   private readonly service: BlogService;

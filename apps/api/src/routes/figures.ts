@@ -1,8 +1,8 @@
 import express from "express";
 import { RequestContext } from "@mikro-orm/core";
-import { FigureController } from "../controllers/figures.ts";
-import { authMiddleware } from "../middleware/auth.ts";
-import { authorizeOwnership } from "../middleware/authorize.ts";
+import { FigureController } from "../controllers/figures.js";
+import { authMiddleware } from "../middleware/auth.js";
+import { authorizeOwnership } from "../middleware/authorize.js";
 
 const router = express.Router();
 const controller = (_req: express.Request) => new FigureController(RequestContext.getEntityManager()!);

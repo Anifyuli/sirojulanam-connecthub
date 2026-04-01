@@ -1,11 +1,11 @@
 import { EntityManager } from '@mikro-orm/core';
-import { Admins } from '../entities/Admins.ts';
-import { Roles } from '../entities/Roles.ts';
-import { RefreshTokens } from '../entities/RefreshTokens.ts';
-import { CreateAdminDto, UpdateAdminDto, AdminResponse, RegisterDto, AdminFilter } from '../types/Admin.ts';
-import { signAccessToken, signRefreshToken } from '../lib/jwt.ts';
-import { verifyPassword, hashPassword } from '../utils/hash.ts';
-import { PaginationParams, PaginatedResponse } from '../types/pagination.ts';
+import { Admins } from '../entities/Admins';
+import { Roles } from '../entities/Roles';
+import { RefreshTokens } from '../entities/RefreshTokens';
+import { CreateAdminDto, UpdateAdminDto, AdminResponse, RegisterDto, AdminFilter } from '../types/Admin';
+import { signAccessToken, signRefreshToken } from '../lib/jwt';
+import { verifyPassword, hashPassword } from '../utils/hash';
+import { PaginationParams, PaginatedResponse } from '../types/pagination';
 
 export interface LoginResponse {
   accessToken: string;

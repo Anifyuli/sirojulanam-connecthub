@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { EntityManager } from "@mikro-orm/core";
-import { FigureService } from "../services/figures.ts";
-import { CreateFigureDto, UpdateFigureDto } from "../types/InspirationalFigure.ts";
+import { FigureService } from "../services/figures.js";
+import { CreateFigureDto, UpdateFigureDto } from "../types/InspirationalFigure.js";
 
 export class FigureController {
   private readonly service: FigureService;

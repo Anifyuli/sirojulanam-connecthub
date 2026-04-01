@@ -1,5 +1,5 @@
 import { Entity, Index, ManyToOne, OneToMany, Collection, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Admins } from './Admins.ts';
+import { Admins } from './Admins';
 
 @Entity()
 @Index({ name: 'idx_figure_name', properties: ['name'] })

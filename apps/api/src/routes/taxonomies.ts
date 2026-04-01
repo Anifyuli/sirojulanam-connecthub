@@ -1,7 +1,7 @@
 import express from "express";
 import { RequestContext } from "@mikro-orm/core";
-import { TaxonomyService, TaxonomyType } from "../services/taxonomy.ts";
-import { authMiddleware } from "../middleware/auth.ts";
+import { TaxonomyService, TaxonomyType } from "../services/taxonomy.js";
+import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 const getService = (_req: express.Request) => new TaxonomyService(RequestContext.getEntityManager()!);

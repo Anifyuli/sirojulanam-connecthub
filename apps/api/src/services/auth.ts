@@ -1,7 +1,7 @@
-import { verifyRefreshToken, signAccessToken } from "../lib/jwt.ts";
+import { verifyRefreshToken, signAccessToken } from "../lib/jwt.js";
 import { EntityManager } from "@mikro-orm/core";
-import { Admins } from "../entities/Admins.ts";
-import { RefreshTokens } from "../entities/RefreshTokens.ts";
+import { Admins } from "../entities/Admins.js";
+import { RefreshTokens } from "../entities/RefreshTokens.js";
 
 export interface RefreshResponse {
   accessToken: string;

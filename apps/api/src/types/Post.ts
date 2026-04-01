@@ -1,4 +1,4 @@
-import { PostType } from '../entities/Posts.ts';
+import { PostType } from '../entities/Posts';
 
 export interface CreatePostDto {
   adminId: number;

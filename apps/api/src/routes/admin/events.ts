@@ -1,8 +1,8 @@
 import express from "express";
 import { RequestContext } from "@mikro-orm/core";
-import { EventController } from "../../controllers/events.ts";
-import { authMiddleware } from "../../middleware/auth.ts";
-import { authorizeOwnership } from "../../middleware/authorize.ts";
+import { EventController } from "../../controllers/events.js";
+import { authMiddleware } from "../../middleware/auth.js";
+import { authorizeOwnership } from "../../middleware/authorize.js";
 
 const router = express.Router();
 const controller = (_req: express.Request) => new EventController(RequestContext.getEntityManager()!);

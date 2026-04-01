@@ -1,11 +1,11 @@
 import { EntityManager } from "@mikro-orm/core";
-import { Events, EventsStatus } from "../entities/Events.ts";
-import { EventTags } from "../entities/EventTags.ts";
-import { EventCategories } from "../entities/EventCategories.ts";
-import { Admins } from "../entities/Admins.ts";
-import { CreateEventDto, UpdateEventDto, EventFilter, EventResponse } from "../types/Event.ts";
-import { PaginationParams, PaginatedResponse } from "../types/pagination.ts";
-import { processQuillContent, cleanupOldImages } from "../lib/contentStorage.ts";
+import { Events, EventsStatus } from "../entities/Events.js";
+import { EventTags } from "../entities/EventTags.js";
+import { EventCategories } from "../entities/EventCategories.js";
+import { Admins } from "../entities/Admins.js";
+import { CreateEventDto, UpdateEventDto, EventFilter, EventResponse } from "../types/Event.js";
+import { PaginationParams, PaginatedResponse } from "../types/pagination.js";
+import { processQuillContent, cleanupOldImages } from "../lib/contentStorage.js";
 
 export interface EventTagDto {
   tags: string[];

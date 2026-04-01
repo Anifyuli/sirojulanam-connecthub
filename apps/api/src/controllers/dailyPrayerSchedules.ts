@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { EntityManager } from "@mikro-orm/core";
-import { DailyPrayerScheduleService } from "../services/dailyPrayerSchedules.ts";
-import { CreateDailyPrayerScheduleDto, UpdateDailyPrayerScheduleDto } from "../types/DailyPrayerSchedules.ts";
-import { PrayTime } from "../entities/DailyPrayerSchedule.ts";
+import { DailyPrayerScheduleService } from "../services/dailyPrayerSchedules.js";
+import { CreateDailyPrayerScheduleDto, UpdateDailyPrayerScheduleDto } from "../types/DailyPrayerSchedules.js";
+import { PrayTime } from "../entities/DailyPrayerSchedule.js";
 
 export class DailyPrayerScheduleController {
   private readonly service: DailyPrayerScheduleService;

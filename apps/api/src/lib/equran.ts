@@ -1,5 +1,5 @@
 import axios from "axios";
-import { EquranIdPrayerTimesResponse } from "../types/PrayerTimes.ts";
+import { EquranIdPrayerTimesResponse } from "../types/PrayerTimes.js";
 
 export async function fetchPrayerTimesFromEquranId(
   provinsi: string,

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { AdminController } from '../controllers/admins.ts';
+import { AdminController } from '../controllers/admins';
 
-jest.mock('../services/admins.ts', () => ({
+jest.mock('../services/admins', () => ({
   AdminService: jest.fn().mockImplementation(() => ({
     login: jest.fn(),
     register: jest.fn(),
@@ -14,7 +14,7 @@ jest.mock('../services/admins.ts', () => ({
   })),
 }));
 
-jest.mock('../services/auth.ts', () => ({
+jest.mock('../services/auth', () => ({
   AuthService: jest.fn().mockImplementation(() => ({
     refresh: jest.fn(),
     revoke: jest.fn(),
@@ -22,8 +22,8 @@ jest.mock('../services/auth.ts', () => ({
   })),
 }));
 
-import { AdminService } from '../services/admins.ts';
-import { AuthService } from '../services/auth.ts';
+import { AdminService } from '../services/admins';
+import { AuthService } from '../services/auth';
 
 function createMockReqResNext(overrides: Partial<any> = {}) {
   const jsonFn = jest.fn().mockReturnThis();

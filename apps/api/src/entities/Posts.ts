@@ -1,9 +1,9 @@
 import { Entity, Index, ManyToOne, OneToMany, Collection, type Opt, PrimaryKey, Property, type Rel, Enum, Cascade } from '@mikro-orm/core';
-import { Admins } from './Admins.ts';
-import { Quotes } from './Quotes.ts';
-import { InspirationalFigures } from './InspirationalFigures.ts';
-import { PostReactions } from './PostReactions.ts';
-import { PostTags } from './PostTags.ts';
+import { Admins } from './Admins';
+import { Quotes } from './Quotes';
+import { InspirationalFigures } from './InspirationalFigures';
+import { PostReactions } from './PostReactions';
+import { PostTags } from './PostTags';
 
 export enum PostType {
   Opinion = 'opinion',

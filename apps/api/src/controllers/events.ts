@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { EntityManager } from "@mikro-orm/core";
-import { EventService } from "../services/event.ts";
-import { CreateEventDto, UpdateEventDto } from "../types/Event.ts";
+import { EventService } from "../services/event.js";
+import { CreateEventDto, UpdateEventDto } from "../types/Event.js";
 
 export class EventController {
   private readonly service: EventService;

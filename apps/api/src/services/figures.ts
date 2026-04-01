@@ -1,10 +1,10 @@
 import { EntityManager } from "@mikro-orm/core";
-import { InspirationalFigures, FigureTags } from "../entities/InspirationalFigures.ts";
-import { Admins } from "../entities/Admins.ts";
-import { CreateFigureDto, UpdateFigureDto, FigureFilter, FigureResponse } from "../types/InspirationalFigure.ts";
-import { PaginationParams, PaginatedResponse } from "../types/pagination.ts";
-import { processImageUrl, deleteFile, extractS3KeyFromUrl } from "../lib/storage.ts";
-import { processQuillContent } from "../lib/contentStorage.ts";
+import { InspirationalFigures, FigureTags } from "../entities/InspirationalFigures.js";
+import { Admins } from "../entities/Admins.js";
+import { CreateFigureDto, UpdateFigureDto, FigureFilter, FigureResponse } from "../types/InspirationalFigure.js";
+import { PaginationParams, PaginatedResponse } from "../types/pagination.js";
+import { processImageUrl, deleteFile, extractS3KeyFromUrl } from "../lib/storage.js";
+import { processQuillContent } from "../lib/contentStorage.js";
 
 export class FigureService {
   constructor(private readonly em: EntityManager) { }

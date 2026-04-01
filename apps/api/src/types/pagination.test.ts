@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { PaginationParams, PaginatedResponse } from '../types/pagination.ts';
+import { PaginationParams, PaginatedResponse } from '../types/pagination';
 
 describe('Pagination Types', () => {
   it('should have correct PaginationParams structure', () => {

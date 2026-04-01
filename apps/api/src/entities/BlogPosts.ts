@@ -1,7 +1,7 @@
 import { Entity, Index, ManyToOne, OneToMany, Collection, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Admins } from './Admins.ts';
-import { BlogCategories } from './BlogCategories.ts';
-import { BlogTags } from './BlogTags.ts';
+import { Admins } from './Admins';
+import { BlogCategories } from './BlogCategories';
+import { BlogTags } from './BlogTags';
 
 @Entity()
 @Index({ name: 'idx_post_title', properties: ['title'] })

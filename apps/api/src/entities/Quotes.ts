@@ -1,6 +1,6 @@
 import { Entity, Index, ManyToOne, OneToMany, Collection, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Admins } from './Admins.ts';
-import { QuoteCategories } from './QuoteCategories.ts';
+import { Admins } from './Admins';
+import { QuoteCategories } from './QuoteCategories';
 
 @Entity()
 @Index({ name: 'idx_quote_content', properties: ['content'] })

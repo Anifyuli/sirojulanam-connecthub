@@ -14,7 +14,5 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "devDependencies": {
-    "drizzle-kit": "0.26.0"
-  }
+  "devDependencies": {}
 }

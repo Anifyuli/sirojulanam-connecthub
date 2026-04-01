@@ -1,10 +1,10 @@
 import { EntityManager } from "@mikro-orm/core";
-import { DailyPrayerSchedule, PrayTime } from "../entities/DailyPrayerSchedule.ts";
+import { DailyPrayerSchedule, PrayTime } from "../entities/DailyPrayerSchedule.js";
 import {
   CreateDailyPrayerScheduleDto,
   UpdateDailyPrayerScheduleDto,
   DailyPrayerScheduleResponse,
-} from "../types/DailyPrayerSchedules.ts";
+} from "../types/DailyPrayerSchedules.js";
 
 export class DailyPrayerScheduleService {
   constructor(private readonly em: EntityManager) { }

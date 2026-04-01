@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { UploadedFile } from "../types/multer.ts";
-import { uploadFile } from "../lib/storage.ts";
+import { UploadedFile } from "../types/multer.js";
+import { uploadFile } from "../lib/storage.js";
 
 export class UploadController {
   upload = async (req: Request, res: Response, next: NextFunction) => {

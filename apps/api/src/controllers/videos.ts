@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { EntityManager } from "@mikro-orm/core";
-import { VideoService } from "../services/videos.ts";
-import { CreateVideoDto, UpdateVideoDto } from "../types/Video.ts";
+import { VideoService } from "../services/videos.js";
+import { CreateVideoDto, UpdateVideoDto } from "../types/Video.js";
 
 export class VideoController {
   private readonly service: VideoService;

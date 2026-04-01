@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { VideoService } from './videos.ts';
-import { VideosSourceType } from '../entities/Videos.ts';
+import { VideoService } from './videos';
+import { VideosSourceType } from '../entities/Videos';
 
-jest.mock('../entities/Videos.ts', () => ({
+jest.mock('../entities/Videos', () => ({
   Videos: class {},
   VideosSourceType: {
     YOUTUBE: 'youtube',
@@ -11,9 +11,9 @@ jest.mock('../entities/Videos.ts', () => ({
     LOCAL: 'local',
   },
 }));
-jest.mock('../entities/VideoTags.ts', () => ({ VideoTags: class {} }));
-jest.mock('../entities/VideoCategories.ts', () => ({ VideoCategories: class {} }));
-jest.mock('../entities/Admins.ts', () => ({ Admins: class {} }));
+jest.mock('../entities/VideoTags', () => ({ VideoTags: class {} }));
+jest.mock('../entities/VideoCategories', () => ({ VideoCategories: class {} }));
+jest.mock('../entities/Admins', () => ({ Admins: class {} }));
 
 function createMockEntityManager() {
   return {

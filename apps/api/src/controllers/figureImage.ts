@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import axios from "axios";
-import { uploadFile } from "../lib/storage.ts";
+import { uploadFile } from "../lib/storage.js";
 
 export class FigureImageController {
   uploadLocal = async (req: Request, res: Response, next: NextFunction) => {

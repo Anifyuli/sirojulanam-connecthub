@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
@@ -5,8 +6,8 @@ import cors from "cors";
 import { RequestContext } from "@mikro-orm/core";
 import path from "path";
 
-import indexRouter from "./routes/index.ts";
-import { getOrm } from "./lib/entityManager.ts";
+import indexRouter from "./routes/index.js";
+import { getOrm } from "./lib/entityManager.js";
 
 const app = express();
 

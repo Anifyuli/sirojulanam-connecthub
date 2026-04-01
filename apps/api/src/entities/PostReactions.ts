@@ -1,6 +1,6 @@
 import { Entity, Enum, Index, ManyToOne, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Admins } from './Admins.ts';
-import { Posts } from './Posts.ts';
+import { Admins } from './Admins';
+import { Posts } from './Posts';
 
 export enum ReactionType {
   Like = 'like',

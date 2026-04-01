@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { EventService } from './event.ts';
+import { EventService } from './event';
 
-jest.mock('../entities/Events.ts', () => ({ Events: class {}, EventsStatus: {} }));
-jest.mock('../entities/EventTags.ts', () => ({ EventTags: class {} }));
-jest.mock('../entities/EventCategories.ts', () => ({ EventCategories: class {} }));
-jest.mock('../entities/Admins.ts', () => ({ Admins: class {} }));
+jest.mock('../entities/Events', () => ({ Events: class {}, EventsStatus: {} }));
+jest.mock('../entities/EventTags', () => ({ EventTags: class {} }));
+jest.mock('../entities/EventCategories', () => ({ EventCategories: class {} }));
+jest.mock('../entities/Admins', () => ({ Admins: class {} }));
 
 function createMockEntityManager() {
   return {

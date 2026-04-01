@@ -1,4 +1,4 @@
-import { processHtmlImages, deleteFile, extractS3KeyFromUrl } from "./storage.ts";
+import { processHtmlImages, deleteFile, extractS3KeyFromUrl } from "./storage.js";
 
 export interface ProcessedContent {
   html: string;

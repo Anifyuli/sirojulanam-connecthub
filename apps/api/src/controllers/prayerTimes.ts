@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { EntityManager } from '@mikro-orm/core';
-import { PrayerTimesService } from '../services/prayerTimes.ts';
+import { PrayerTimesService } from '../services/prayerTimes';
 
 export class PrayerTimesController {
   private readonly service: PrayerTimesService;

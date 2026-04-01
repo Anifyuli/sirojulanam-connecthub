@@ -1,4 +1,4 @@
-import { PrayTime } from "../entities/DailyPrayerSchedule.ts";
+import { PrayTime } from "../entities/DailyPrayerSchedule.js";
 
 export interface CreateDailyPrayerScheduleDto {
   prayTime: PrayTime;

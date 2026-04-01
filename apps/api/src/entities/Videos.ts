@@ -1,7 +1,7 @@
 import { Entity, Enum, ManyToOne, OneToMany, Collection, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Admins } from './Admins.ts';
-import { VideoCategories } from './VideoCategories.ts';
-import { VideoTags } from './VideoTags.ts';
+import { Admins } from './Admins';
+import { VideoCategories } from './VideoCategories';
+import { VideoTags } from './VideoTags';
 
 @Entity()
 export class Videos {

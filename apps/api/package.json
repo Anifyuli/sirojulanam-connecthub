@@ -2,16 +2,16 @@
   "name": "api",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "tsx watch ./src/bin/www",
-    "build": "tsc",
-    "start": "tsx ./src/bin/www",
+    "dev": "TSX_NODE_OPTIONS=\"--project tsconfig.dev.json\" tsx watch ./src/bin/www.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node ./dist/src/bin/www.js",
     "seed": "tsx ./src/seed.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "typecheck": "tsc -p tsconfig.dev.json --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.744.0",
@@ -41,6 +41,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
+    "@types/debug": "^4.1.13",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",

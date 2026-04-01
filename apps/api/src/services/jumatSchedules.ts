@@ -1,10 +1,10 @@
 import { EntityManager } from "@mikro-orm/core";
-import { JumatSchedules, JumatSchedulesPasaran } from "../entities/JumatSchedules.ts";
+import { JumatSchedules, JumatSchedulesPasaran } from "../entities/JumatSchedules.js";
 import {
   CreateJumatSchedulesDto,
   UpdateJumatScheduleDto,
   JumatScheduleResponse,
-} from "../types/JumatSchedules.ts";
+} from "../types/JumatSchedules.js";
 
 export class JumatScheduleService {
   constructor(private readonly em: EntityManager) { }

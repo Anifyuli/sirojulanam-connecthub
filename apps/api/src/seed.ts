@@ -1,17 +1,17 @@
 import "dotenv/config";
-import { initEntityManager } from "./lib/entityManager.ts";
-import { Roles } from "./entities/Roles.ts";
-import { Admins } from "./entities/Admins.ts";
-import { PrayerTimes } from "./entities/PrayerTimes.ts";
-import { DailyPrayerSchedule, PrayTime } from "./entities/DailyPrayerSchedule.ts";
-import { JumatSchedules, JumatSchedulesPasaran } from "./entities/JumatSchedules.ts";
-import { BlogCategories } from "./entities/BlogCategories.ts";
-import { BlogPosts } from "./entities/BlogPosts.ts";
-import { EventCategories } from "./entities/EventCategories.ts";
-import { Events, EventsStatus } from "./entities/Events.ts";
-import { VideoCategories } from "./entities/VideoCategories.ts";
-import { Videos, VideosSourceType } from "./entities/Videos.ts";
-import { hashPassword } from "./utils/hash.ts";
+import { initEntityManager } from "./lib/entityManager.js";
+import { Roles } from "./entities/Roles.js";
+import { Admins } from "./entities/Admins.js";
+import { PrayerTimes } from "./entities/PrayerTimes.js";
+import { DailyPrayerSchedule, PrayTime } from "./entities/DailyPrayerSchedule.js";
+import { JumatSchedules, JumatSchedulesPasaran } from "./entities/JumatSchedules.js";
+import { BlogCategories } from "./entities/BlogCategories.js";
+import { BlogPosts } from "./entities/BlogPosts.js";
+import { EventCategories } from "./entities/EventCategories.js";
+import { Events, EventsStatus } from "./entities/Events.js";
+import { VideoCategories } from "./entities/VideoCategories.js";
+import { Videos, VideosSourceType } from "./entities/Videos.js";
+import { hashPassword } from "./utils/hash.js";
 
 const DAY_NAMES = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
@@ -39,7 +39,7 @@ async function seed() {
   const orm = await initEntityManager();
   const em = orm.em.fork();
 
-  console.log("🌱 Starting seed...");
+  console.log("Starting seed...");
 
   // ─── Roles ─────────────────────────────────────────────────────
   let managerRole = await em.findOne(Roles, { name: "manager" });
@@ -48,7 +48,7 @@ async function seed() {
     managerRole.name = "manager";
     em.persist(managerRole);
     await em.flush();
-    console.log("✅ Created role: manager");
+    console.log("Created role: manager");
   }
 
   let editorRole = await em.findOne(Roles, { name: "editor" });
@@ -57,7 +57,7 @@ async function seed() {
     editorRole.name = "editor";
     em.persist(editorRole);
     await em.flush();
-    console.log("✅ Created role: editor");
+    console.log("Created role: editor");
   }
 
   // ─── Admin ─────────────────────────────────────────────────────
@@ -73,10 +73,10 @@ async function seed() {
     admin.isActive = true;
     em.persist(admin);
     await em.flush();
-    console.log("✅ Created admin: admin@sirojulanam.org / admin123");
+    console.log("Created admin: admin@sirojulanam.org / admin123");
   } else {
     admin = existingAdmin;
-    console.log("ℹ️  Admin already exists");
+    console.log("Admin already exists");
   }
 
   // ─── Prayer Times (full month) ────────────────────────────────
@@ -99,7 +99,7 @@ async function seed() {
     }
   }
   await em.flush();
-  console.log(`✅ Prayer times seeded (${daysInMonth} days)`);
+  console.log(`Prayer times seeded (${daysInMonth} days)`);
 
   // ─── Daily Prayer Schedules (Imam 5 Waktu) ─────────────────────────────────────────
   const dailyPrayerData = [
@@ -120,7 +120,7 @@ async function seed() {
     }
   }
   await em.flush();
-  console.log("✅ Daily prayer schedules seeded (5 times)");
+  console.log("Daily prayer schedules seeded (5 times)");
 
   // ─── Jumat Schedules ─────────────────────────────────────────
   const jumatData = [
@@ -143,7 +143,7 @@ async function seed() {
     }
   }
   await em.flush();
-  console.log("✅ Jumat schedules seeded (5 pasaran)");
+  console.log("Jumat schedules seeded (5 pasaran)");
 
   // ─── Blog Categories ─────────────────────────────────────────
   const blogCatData = [
@@ -166,7 +166,7 @@ async function seed() {
     blogCategories.push(cat);
   }
   await em.flush();
-  console.log("✅ Blog categories seeded");
+  console.log("Blog categories seeded");
 
   // ─── Blog Posts ──────────────────────────────────────────────
   const blogPosts = [
@@ -196,7 +196,7 @@ async function seed() {
     }
   }
   await em.flush();
-  console.log("✅ Blog posts seeded");
+  console.log("Blog posts seeded");
 
   // ─── Event Categories ───────────────────────────────────────
   const eventCatData = [
@@ -218,7 +218,7 @@ async function seed() {
     eventCategories.push(cat);
   }
   await em.flush();
-  console.log("✅ Event categories seeded");
+  console.log("Event categories seeded");
 
   // ─── Events ─────────────────────────────────────────────────
   const events = [
@@ -249,7 +249,7 @@ async function seed() {
     }
   }
   await em.flush();
-  console.log("✅ Events seeded");
+  console.log("Events seeded");
 
   // ─── Video Categories ──────────────────────────────────────
   const videoCatData = [
@@ -270,7 +270,7 @@ async function seed() {
     videoCategories.push(cat);
   }
   await em.flush();
-  console.log("✅ Video categories seeded");
+  console.log("Video categories seeded");
 
   // ─── Videos ─────────────────────────────────────────────────
   const videos = [
@@ -302,13 +302,13 @@ async function seed() {
     }
   }
   await em.flush();
-  console.log("✅ Videos seeded");
+  console.log("Videos seeded");
 
-  console.log("🎉 Seed completed!");
+  console.log("Seed completed!");
   await orm.close(true);
 }
 
 seed().catch((err) => {
-  console.error("❌ Seed failed:", err);
+  console.error("Seed failed:", err);
   process.exit(1);
 });

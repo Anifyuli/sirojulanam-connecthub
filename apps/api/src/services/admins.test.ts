@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { AdminService } from '../services/admins.ts';
+import { AdminService } from '../services/admins';
 
-jest.mock('../lib/jwt.ts', () => ({
+jest.mock('../lib/jwt', () => ({
   signAccessToken: jest.fn().mockReturnValue('mock-access-token'),
   signRefreshToken: jest.fn().mockReturnValue('mock-refresh-token'),
   verifyAccessToken: jest.fn(),
   verifyRefreshToken: jest.fn(),
 }));
 
-jest.mock('../utils/hash.ts', () => ({
+jest.mock('../utils/hash', () => ({
   hashPassword: () => Promise.resolve('hashed-password'),
   verifyPassword: () => Promise.resolve(true),
 }));

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { PrayerTimesService } from './prayerTimes.ts';
+import { PrayerTimesService } from './prayerTimes';
 
-jest.mock('../entities/PrayerTimes.ts', () => ({ PrayerTimes: class {} }));
+jest.mock('../entities/PrayerTimes', () => ({ PrayerTimes: class {} }));
 
 function createMockEntityManager() {
   return {

@@ -1,6 +1,6 @@
 import { EntityManager } from "@mikro-orm/core";
-import { PrayerTimes } from "../entities/PrayerTimes.ts";
-import { PrayerTimesResponse, PrayerTimesFilter, EquranIdPrayerTimesResponse, PrayerTimeDaily } from "../types/PrayerTimes.ts";
+import { PrayerTimes } from "../entities/PrayerTimes.js";
+import { PrayerTimesResponse, PrayerTimesFilter, EquranIdPrayerTimesResponse, PrayerTimeDaily } from "../types/PrayerTimes.js";
 
 export class PrayerTimesService {
   private readonly API_BASE_URL = "https://equran.id/api/v2/shalat";

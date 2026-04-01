@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
-import { UploadController } from "../../controllers/uploads.ts";
-import { authMiddleware } from "../../middleware/auth.ts";
+import { UploadController } from "../../controllers/uploads.js";
+import { authMiddleware } from "../../middleware/auth.js";
 
 const router = express.Router();
 const controller = new UploadController();

@@ -1,4 +1,4 @@
-import { VideosSourceType } from "../entities/Videos.ts";
+import { VideosSourceType } from "../entities/Videos.js";
 
 export interface CreateVideoDto {
   categoryId?: number | null;

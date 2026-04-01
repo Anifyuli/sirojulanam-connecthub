@@ -1,7 +1,7 @@
 import { Entity, Enum, ManyToOne, OneToMany, Collection, type Opt, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Admins } from './Admins.ts';
-import { EventCategories } from './EventCategories.ts'
-import { EventTags } from './EventTags.ts';
+import { Admins } from './Admins';
+import { EventCategories } from './EventCategories'
+import { EventTags } from './EventTags';
 
 @Entity()
 export class Events {

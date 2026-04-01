@@ -1,7 +1,7 @@
 import express from "express";
 import { RequestContext } from "@mikro-orm/core";
-import { JumatScheduleController } from "../controllers/jumatSchedules.ts";
-import { authMiddleware } from "../middleware/auth.ts";
+import { JumatScheduleController } from "../controllers/jumatSchedules.js";
+import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 const controller = (_req: express.Request) => new JumatScheduleController(RequestContext.getEntityManager()!);

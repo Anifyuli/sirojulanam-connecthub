@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { authMiddleware } from '../middleware/auth.ts';
+import { authMiddleware } from '../middleware/auth';
 
-jest.mock('../lib/jwt.ts', () => ({
+jest.mock('../lib/jwt', () => ({
   verifyAccessToken: jest.fn(),
 }));
 
-import { verifyAccessToken } from '../lib/jwt.ts';
+import { verifyAccessToken } from '../lib/jwt';
 
 const mockVerifyAccessToken = verifyAccessToken as jest.MockedFunction<typeof verifyAccessToken>;
 

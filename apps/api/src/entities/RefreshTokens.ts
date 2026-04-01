@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, PrimaryKey, Property, type Rel } from '@mikro-orm/core';
-import { Admins } from './Admins.ts';
+import { Admins } from './Admins';
 
 @Entity()
 export class RefreshTokens {

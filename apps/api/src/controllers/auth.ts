@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { EntityManager } from '@mikro-orm/core';
-import { AdminService } from '../services/admins.ts';
+import { AdminService } from '../services/admins';
 
 export class AuthController {
   private readonly service: AdminService;

@@ -9,12 +9,12 @@ jest.mock('@mikro-orm/core', () => ({
   Events: class {},
 }));
 
-jest.mock('../lib/jwt.ts', () => ({
+jest.mock('../lib/jwt', () => ({
   verifyAccessToken: jest.fn(),
 }));
 
 import { RequestContext } from '@mikro-orm/core';
-import { authorizeOwnership, isManager, getAuthUser, AuthUser, checkOwnership } from './authorize.ts';
+import { authorizeOwnership, isManager, getAuthUser, AuthUser, checkOwnership } from './authorize';
 
 const mockEm: {
   findOne: jest.MockedFunction<any>;

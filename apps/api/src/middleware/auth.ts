@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyAccessToken } from "../lib/jwt.ts";
+import { verifyAccessToken } from "../lib/jwt.js";
 
 function getToken(req: Request): string | undefined {
   const header = req.headers.authorization;

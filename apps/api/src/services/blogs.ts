@@ -1,12 +1,12 @@
 import { EntityManager } from "@mikro-orm/core";
-import { BlogPosts } from "../entities/BlogPosts.ts";
-import { BlogTags } from "../entities/BlogTags.ts";
-import { BlogCategories } from "../entities/BlogCategories.ts";
-import { Admins } from "../entities/Admins.ts";
-import { CreateBlogPostDto, UpdateBlogPostDto, BlogPostFilter, BlogPostResponse } from "../types/Blog.ts";
-import { PaginationParams, PaginatedResponse } from "../types/pagination.ts";
-import { processQuillContent, cleanupOldImages } from "../lib/contentStorage.ts";
-import { processImageUrl } from "../lib/storage.ts";
+import { BlogPosts } from "../entities/BlogPosts.js";
+import { BlogTags } from "../entities/BlogTags.js";
+import { BlogCategories } from "../entities/BlogCategories.js";
+import { Admins } from "../entities/Admins.js";
+import { CreateBlogPostDto, UpdateBlogPostDto, BlogPostFilter, BlogPostResponse } from "../types/Blog.js";
+import { PaginationParams, PaginatedResponse } from "../types/pagination.js";
+import { processQuillContent, cleanupOldImages } from "../lib/contentStorage.js";
+import { processImageUrl } from "../lib/storage.js";
 
 export class BlogService {
   constructor(private readonly em: EntityManager) { }

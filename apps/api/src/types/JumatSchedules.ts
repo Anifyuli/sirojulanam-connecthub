@@ -1,4 +1,4 @@
-import { JumatSchedulesPasaran } from "../entities/JumatSchedules.ts";
+import { JumatSchedulesPasaran } from "../entities/JumatSchedules.js";
 
 export interface CreateJumatSchedulesDto {
   pasaran: JumatSchedulesPasaran;

@@ -1,7 +1,7 @@
 import express from "express";
 import { RequestContext } from "@mikro-orm/core";
-import { PrayerTimesController } from "../controllers/prayerTimes.ts";
-import { authMiddleware } from "../middleware/auth.ts";
+import { PrayerTimesController } from "../controllers/prayerTimes.js";
+import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 const controller = (_req: express.Request) => new PrayerTimesController(RequestContext.getEntityManager()!);

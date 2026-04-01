@@ -1,7 +1,7 @@
 import express from "express";
 import { RequestContext } from "@mikro-orm/core";
-import { AuthController } from '../controllers/auth.ts';
-import { authMiddleware } from "../middleware/auth.ts";
+import { AuthController } from '../controllers/auth';
+import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 
