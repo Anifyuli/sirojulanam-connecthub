@@ -6,13 +6,13 @@ export class VideoCategories {
   @PrimaryKey({ type: 'smallint' })
   id!: number;
 
-  @Property({ length: 100 })
+  @Property({ type: 'string', length: 100 })
   name!: string;
 
-  @Property({ length: 120, unique: 'slug' })
+  @Property({ type: 'string', length: 120, unique: 'slug' })
   slug!: string;
 
-  @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
   createdAt?: Date;
 
 }

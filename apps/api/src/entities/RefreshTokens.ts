@@ -4,19 +4,19 @@ import { Admins } from './Admins';
 @Entity()
 export class RefreshTokens {
 
-  @PrimaryKey()
+  @PrimaryKey({ type: 'number' })
   id!: number;
 
   @ManyToOne({ entity: () => Admins })
   admin!: Rel<Admins>;
 
-  @Property({ length: 255, unique: 'token' })
+  @Property({ type: 'string', length: 255, unique: 'token' })
   token!: string;
 
-  @Property({ columnType: 'timestamp' })
+  @Property({ type: 'date', columnType: 'timestamp' })
   expiresAt!: Date;
 
-  @Property({ columnType: 'timestamp', defaultRaw: `current_timestamp()` })
+  @Property({ type: 'date', columnType: 'timestamp', defaultRaw: `current_timestamp()` })
   createdAt!: Date;
 
   @Property({ type: 'boolean', default: true })

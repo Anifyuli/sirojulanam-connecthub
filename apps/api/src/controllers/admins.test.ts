@@ -43,6 +43,7 @@ function createMockReqResNext(overrides: Partial<any> = {}) {
     status: statusFn,
     json: jsonFn,
     cookie: cookieFn,
+    clearCookie: jest.fn(),
     send: sendFn,
     locals: {},
   };

@@ -6,7 +6,7 @@ export class Roles {
   @PrimaryKey({ type: 'tinyint' })
   id!: number;
 
-  @Property({ length: 30, unique: 'name' })
+  @Property({ type: 'string', length: 30, unique: 'name' })
   name!: string;
 
 }

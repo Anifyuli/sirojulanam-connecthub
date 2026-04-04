@@ -86,7 +86,43 @@ export class PrayerTimesService {
   }
 
   async findByDateAndCity(date: string, city: string): Promise<PrayerTimesResponse | null> {
-    const prayer = await this.em.findOne(PrayerTimes, { date, city });
+    // Try exact match first
+    let prayer = await this.em.findOne(PrayerTimes, { date, city });
+
+    // If not found, try partial match (e.g., "Pati" matches "Kab. Pati")
+    let allPrayers: PrayerTimes[] = [];
+    if (!prayer) {
+      allPrayers = await this.em.find(PrayerTimes, { date });
+      prayer = allPrayers.find(p => p.city.includes(city)) || null;
+    }
+
+    // If still not found, try auto-fetch from equran.id
+    if (!prayer) {
+      // Extract month and year from date (format: YYYY-MM-DD)
+      const [year, month] = date.split('-').map(Number);
+      
+      // Find city name from existing data or use default
+      // IMPORTANT: equran.id API requires exact city name like "Kab. Pati"
+      const existingCity = allPrayers.length > 0 ? allPrayers[0].city : 'Kab. Pati';
+      const province = allPrayers.length > 0 ? allPrayers[0].province : 'Jawa Tengah';
+
+      try {
+        // Auto-fetch data for this month
+        console.log(`Auto-fetching prayer times for ${month}/${year} - ${existingCity}, ${province}`);
+        await this.fetchAndSaveFromEquranId(province, existingCity, month, year);
+        
+        // Try again after fetching
+        prayer = await this.em.findOne(PrayerTimes, { date, city });
+        if (!prayer) {
+          const refreshedPrayers = await this.em.find(PrayerTimes, { date });
+          prayer = refreshedPrayers.find(p => p.city.includes(city)) || null;
+        }
+      } catch (error) {
+        console.warn(`Auto-fetch failed for ${date}:`, error);
+        // Return null if auto-fetch fails
+        return null;
+      }
+    }
 
     if (!prayer) {
       return null;
@@ -242,7 +278,14 @@ export class PrayerTimesService {
   }
 
   async deleteByDateAndCity(date: string, city: string): Promise<boolean> {
-    const prayer = await this.em.findOne(PrayerTimes, { date, city });
+    // Try exact match first
+    let prayer = await this.em.findOne(PrayerTimes, { date, city });
+
+    // If not found, try partial match
+    if (!prayer) {
+      const allPrayers = await this.em.find(PrayerTimes, { date });
+      prayer = allPrayers.find(p => p.city.includes(city)) || null;
+    }
 
     if (!prayer) {
       return false;

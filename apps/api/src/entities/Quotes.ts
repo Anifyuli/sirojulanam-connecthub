@@ -6,22 +6,22 @@ import { QuoteCategories } from './QuoteCategories';
 @Index({ name: 'idx_quote_content', properties: ['content'] })
 export class Quotes {
 
-  @PrimaryKey()
+  @PrimaryKey({ type: 'bigint' })
   id!: bigint;
 
   @ManyToOne({ entity: () => QuoteCategories, deleteRule: 'set null', nullable: true })
   category?: Rel<QuoteCategories>;
 
-  @Property({ length: 200, nullable: true })
+  @Property({ type: 'string', length: 200, nullable: true })
   title?: string;
 
   @ManyToOne({ entity: () => Admins, index: 'fk_quote_admin' })
   admin!: Rel<Admins>;
 
-  @Property({ columnType: 'text' })
+  @Property({ type: 'text', columnType: 'text' })
   content!: string;
 
-  @Property({ length: 200, nullable: true })
+  @Property({ type: 'string', length: 200, nullable: true })
   source?: string;
 
   @Property({ type: 'boolean' })
@@ -33,22 +33,22 @@ export class Quotes {
   @OneToMany({ entity: () => QuoteTags, mappedBy: 'quote' })
   tags = new Collection<QuoteTags>(this);
 
-  @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
   createdAt?: Date;
 
-  @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()`, extra: 'on update current_timestamp()' })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()`, extra: 'on update current_timestamp()' })
   updatedAt?: Date;
 
 }
 
 @Entity()
 export class QuoteTags {
-  @PrimaryKey()
+  @PrimaryKey({ type: 'number' })
   id!: number;
 
   @ManyToOne({ entity: () => Quotes, deleteRule: 'cascade' })
   quote!: Rel<Quotes>;
 
-  @Property({ length: 80 })
+  @Property({ type: 'string', length: 80 })
   tag!: string;
 }

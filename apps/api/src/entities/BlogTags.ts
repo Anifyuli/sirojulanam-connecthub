@@ -9,7 +9,7 @@ export class BlogTags {
   @ManyToOne({ entity: () => BlogPosts, deleteRule: 'cascade', primary: true })
   post!: Rel<BlogPosts>;
 
-  @Property({ length: 80, primary: true })
+  @Property({ type: 'string', length: 80, primary: true })
   tag!: string;
 
 }

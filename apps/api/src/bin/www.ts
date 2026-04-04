@@ -101,6 +101,9 @@ async function bootstrap() {
         "Database connection failed:",
         error instanceof Error ? error.message : error,
       );
+      if (error instanceof Error && error.stack) {
+        console.error("Stack trace:", error.stack);
+      }
       console.log("Continuing without database (some features may not work)");
     }
   } else {

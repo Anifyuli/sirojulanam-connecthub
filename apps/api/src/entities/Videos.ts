@@ -6,7 +6,7 @@ import { VideoTags } from './VideoTags';
 @Entity()
 export class Videos {
 
-  @PrimaryKey()
+  @PrimaryKey({ type: 'bigint' })
   id!: bigint;
 
   @ManyToOne({ entity: () => VideoCategories, deleteRule: 'set null', nullable: true, index: 'fk_video_category' })
@@ -18,10 +18,10 @@ export class Videos {
   @OneToMany({ entity: () => VideoTags, mappedBy: 'video' })
   tags = new Collection<VideoTags>(this);
 
-  @Property({ length: 300 })
+  @Property({ type: 'string', length: 300 })
   title!: string;
 
-  @Property({ length: 350, unique: 'slug' })
+  @Property({ type: 'string', length: 350, unique: 'slug' })
   slug!: string;
 
   @Property({ type: 'text', length: 65535, nullable: true })
@@ -30,19 +30,19 @@ export class Videos {
   @Enum({ items: () => VideosSourceType })
   sourceType!: VideosSourceType;
 
-  @Property({ length: 500, nullable: true })
+  @Property({ type: 'string', length: 500, nullable: true })
   sourceUrl?: string;
 
-  @Property({ length: 50, nullable: true })
+  @Property({ type: 'string', length: 50, nullable: true })
   platformVideoId?: string;
 
-  @Property({ length: 500, nullable: true })
+  @Property({ type: 'string', length: 500, nullable: true })
   localFileUrl?: string;
 
-  @Property({ length: 500, nullable: true })
+  @Property({ type: 'string', length: 500, nullable: true })
   thumbnailUrl?: string;
 
-  @Property({ unsigned: true, nullable: true })
+  @Property({ type: 'integer', unsigned: true, nullable: true })
   durationSeconds?: number;
 
   @Property({ type: 'boolean' })
@@ -51,16 +51,16 @@ export class Videos {
   @Property({ type: 'boolean' })
   isFeatured: boolean & Opt = false;
 
-  @Property({ columnType: 'timestamp', nullable: true })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true })
   publishedAt?: Date;
 
   @Property({ type: 'integer', unsigned: true })
   viewCount: number & Opt = 0;
 
-  @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
   createdAt?: Date;
 
-  @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()`, extra: 'on update current_timestamp()' })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()`, extra: 'on update current_timestamp()' })
   updatedAt?: Date;
 
 }

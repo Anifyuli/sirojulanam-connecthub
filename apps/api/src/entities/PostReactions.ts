@@ -14,7 +14,7 @@ export enum ReactionType {
 @Index({ name: 'idx_reaction_admin', properties: ['admin'] })
 export class PostReactions {
 
-  @PrimaryKey()
+  @PrimaryKey({ type: 'bigint' })
   id!: bigint;
 
   @ManyToOne({ entity: () => Posts, index: 'fk_reaction_post', deleteRule: 'cascade' })
@@ -26,7 +26,7 @@ export class PostReactions {
   @Enum({ items: () => ReactionType })
   reactionType!: ReactionType;
 
-  @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
   createdAt?: Date;
 
 }

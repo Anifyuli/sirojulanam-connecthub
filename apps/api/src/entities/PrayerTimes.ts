@@ -4,7 +4,7 @@ import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core';
 @Unique({ properties: ['date', 'city'] })
 export class PrayerTimes {
 
-  @PrimaryKey()
+  @PrimaryKey({ type: 'number' })
   id!: number;
 
   @Property({ type: 'string' })
@@ -49,10 +49,10 @@ export class PrayerTimes {
   @Property({ type: 'string', length: 8 })
   isha!: string;
 
-  @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
   createdAt?: Date;
 
-  @Property({ columnType: 'timestamp', nullable: true })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true })
   updatedAt?: Date;
 
 }

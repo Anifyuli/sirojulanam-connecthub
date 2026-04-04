@@ -9,7 +9,7 @@ export class VideoTags {
   @ManyToOne({ entity: () => Videos, deleteRule: 'cascade', primary: true })
   video!: Rel<Videos>;
 
-  @PrimaryKey({ length: 80 })
+  @PrimaryKey({ type: 'string', length: 80 })
   tag!: string;
 
 }

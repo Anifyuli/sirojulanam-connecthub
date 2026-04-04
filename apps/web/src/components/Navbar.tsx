@@ -11,10 +11,18 @@ export function FloatingWhatsApp() {
       href="https://wa.me/6285219342959"
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-transform hover:scale-110 hover:bg-green-600"
+      className="group fixed bottom-6 right-6 z-50 inline-flex items-center overflow-hidden rounded-full bg-green-500 shadow-lg transition-all duration-300 hover:bg-green-600 hover:pr-2 hover:shadow-xl"
       aria-label="Hubungi kami via WhatsApp"
     >
-      <Whatsapp className="h-7 w-7" />
+      {/* WhatsApp FAB Icon - Always visible */}
+      <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-green-500 text-white transition-colors group-hover:bg-green-600">
+        <Whatsapp className="h-7 w-7" />
+      </div>
+      
+      {/* Text - Hidden by default, shows on hover with expand animation */}
+      <span className="max-w-0 overflow-hidden text-white font-medium whitespace-nowrap opacity-0 transition-all duration-300 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2">
+        Hubungi Kami
+      </span>
     </a>
   );
 }

@@ -14,7 +14,7 @@ export class DailyPrayerSchedule {
   @PrimaryKey({ type: 'enum' })
   prayTime!: PrayTime;
 
-  @Property({ length: 150 })
+  @Property({ type: 'string', length: 150 })
   imam!: string;
 
 }

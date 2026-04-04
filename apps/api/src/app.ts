@@ -7,7 +7,6 @@ import { RequestContext } from "@mikro-orm/core";
 import path from "path";
 
 import indexRouter from "./routes/index.js";
-import { getOrm } from "./lib/entityManager.js";
 
 const app = express();
 
@@ -25,8 +24,14 @@ app.use(cookieParser());
 const publicPath = path.join(process.cwd(), "public", "uploads");
 app.use("/uploads", express.static(publicPath));
 
-app.use((req, res, next) => {
-  RequestContext.create(getOrm().em, next);
+// Lazy-load ORM to ensure it's initialized before use
+app.use(async (req, res, next) => {
+  try {
+    const { getOrm } = await import("./lib/entityManager.js");
+    RequestContext.create(getOrm().em, next);
+  } catch (error) {
+    next(error);
+  }
 });
 app.use("/api", indexRouter);
 

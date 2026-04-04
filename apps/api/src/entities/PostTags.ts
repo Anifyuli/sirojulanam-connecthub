@@ -7,7 +7,7 @@ export class PostTags {
   @ManyToOne({ entity: () => Posts, primary: true })
   post!: Rel<Posts>;
 
-  @Property({ columnType: 'varchar(80)', primary: true })
+  @Property({ type: 'string', columnType: 'varchar(80)', primary: true })
   tag!: string;
 
   constructor(tag?: string) {

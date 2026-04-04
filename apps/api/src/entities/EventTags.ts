@@ -9,7 +9,7 @@ export class EventTags {
   @ManyToOne({ entity: () => Events, deleteRule: 'cascade', primary: true })
   event!: Rel<Events>;
 
-  @PrimaryKey({ length: 80 })
+  @PrimaryKey({ type: 'string', length: 80 })
   tag!: string;
 
 }

@@ -16,7 +16,7 @@ export enum PostType {
 @Index({ name: 'idx_post_created', properties: ['createdAt'] })
 export class Posts {
 
-  @PrimaryKey()
+  @PrimaryKey({ type: 'bigint' })
   id!: bigint;
 
   @ManyToOne({ entity: () => Admins, index: 'fk_post_admin' })
@@ -25,10 +25,10 @@ export class Posts {
   @Enum({ items: () => PostType, default: PostType.Opinion })
   type: PostType & Opt = PostType.Opinion;
 
-  @Property({ columnType: 'varchar(300)' })
+  @Property({ type: 'string', columnType: 'varchar(300)' })
   title!: string;
 
-  @Property({ columnType: 'text' })
+  @Property({ type: 'text', columnType: 'text' })
   content!: string;
 
   @ManyToOne({ entity: () => Quotes, deleteRule: 'set null', nullable: true })
@@ -49,10 +49,10 @@ export class Posts {
   @OneToMany({ entity: () => PostTags, mappedBy: 'post', cascade: [Cascade.ALL] })
   tags = new Collection<PostTags>(this);
 
-  @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()` })
   createdAt?: Date;
 
-  @Property({ columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()`, extra: 'on update current_timestamp()' })
+  @Property({ type: 'date', columnType: 'timestamp', nullable: true, defaultRaw: `current_timestamp()`, extra: 'on update current_timestamp()' })
   updatedAt?: Date;
 
 }

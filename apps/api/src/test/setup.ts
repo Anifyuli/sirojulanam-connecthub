@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
+
 beforeAll(async () => {
   // Global test setup - runs once before all tests
 });

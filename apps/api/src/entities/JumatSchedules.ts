@@ -14,12 +14,12 @@ export class JumatSchedules {
   @PrimaryKey({ type: 'enum' })
   pasaran!: JumatSchedulesPasaran;
 
-  @Property({ length: 150 })
+  @Property({ type: 'string', length: 150 })
   imam!: string;
 
-  @Property({ length: 150 })
+  @Property({ type: 'string', length: 150 })
   khotib!: string;
 
-  @Property({ length: 150 })
+  @Property({ type: 'string', length: 150 })
   bilal!: string;
 }
